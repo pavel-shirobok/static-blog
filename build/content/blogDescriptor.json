@@ -1,7 +1,7 @@
 {
     "posts": [
         {
-            "postName": "happy new year",
+            "postName": "31.12.2014",
             "postFileName": "31-0",
             "directory": [
                 "2014",
@@ -10,7 +10,7 @@
             ]
         },
         {
-            "postName": "Test-1",
+            "postName": "01.02.2015",
             "postFileName": "06-0",
             "directory": [
                 "2015",
@@ -19,7 +19,7 @@
             ]
         },
         {
-            "postName": "Test-2",
+            "postName": "02.02.2015",
             "postFileName": "06-0",
             "directory": [
                 "2015",

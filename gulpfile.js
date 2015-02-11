@@ -1,6 +1,7 @@
 var gulp = require('gulp');
 var blog = require('./blog');
-var markdown = require('gulp-markdown')
+var markdown = require('gulp-markdown');
+var marked = require('marked');
 var jade = require('gulp-jade');
 var concat = require('gulp-concat');
 var coffee = require('gulp-coffee');
@@ -23,10 +24,33 @@ var CSS_APP = ['core/stylus/app.styl'];
 var FONTS = ['core/fonts/*.*'];
 
 gulp.task('blog:posts', function(){
+    var customRenderer = new marked.Renderer();
+    var oldHead = customRenderer.heading.bind(customRenderer);
+
+    var cut = false;
+    customRenderer.heading = function(text, level, raw) {
+        if(!cut && text =='cut' && level == 1) {
+            cut = true;
+            return '<sb-cut post="post" is-short="isShort"></sb-cut>';
+        }
+        return oldHead(text, level, raw);
+    };
+
+    var oldImage = customRenderer.image.bind(customRenderer);
+
+    customRenderer.image = function(href, title, text) {
+
+         if(href.indexOf('http://')==0 || href.indexOf('https://')== 0){
+            return oldImage(href, title, text);
+         }
+
+         return '<sb-img post="post" src="' + href + '" title="'+ title+'" alt="' + text+'"></sb-img>';
+     };
+
     gulp
         .src  ( 'content/**/*.md' )
-        .pipe ( blog('content') )
-        .pipe ( markdown() )
+        .pipe ( blog('build/content') )
+        .pipe ( markdown({renderer : customRenderer}) )
         .pipe ( gulp.dest('build/content') )
 });
 
@@ -83,7 +107,7 @@ gulp.task('core:css/app', function(){
 gulp.task('core:watch', function(){
     watchIt('core:jade', JADE_SRC);
     watchIt('core:js/app', JS_APP);
-    watchIt('core:css/app', CSS_APP);
+    watchIt('core:css/app', 'core/stylus/*.styl');
 });
 
 function watchIt(name, src) {

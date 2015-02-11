@@ -6,6 +6,8 @@ module.exports = function(target_content) {
     var customRenderer = new marked.Renderer();
     var oldHead = customRenderer.heading.bind(customRenderer);
 
+
+
     var blog = {
         posts : [],
         tree : {}
@@ -27,10 +29,13 @@ module.exports = function(target_content) {
 
     function findPostName(file){
         var postName = undefined;
+        var cut = false;
         customRenderer.heading = function(text, level, raw) {
             if(!postName){
                 postName = text;
             }
+
+
             return oldHead(text, level, raw);
         };
         marked.setOptions({ renderer : customRenderer });
@@ -62,6 +67,9 @@ module.exports = function(target_content) {
 
         addToBlog(getPostDescriptor(file));
 
+
+
+
         done(undefined, file);
 
     }, function(done){
@@ -69,6 +77,7 @@ module.exports = function(target_content) {
             path.resolve(target_content + '\\blogDescriptor.json'),
             JSON.stringify(blog, null, 4)
         );
-        done()
+        console.log('test');
+        done();
     });
 };

@@ -1,9 +1,9 @@
 angular
   .module 'StaticBlogApp',
   [
-    'ngRoute',
+    'ngRoute'
     'EntryPointController'
+    'sbGlobalLoader'
+    'sbSpinner',
+    'sbThread'
   ]
-
-
-#angular.bootstrap($('body'), 'StaticBlogApp');

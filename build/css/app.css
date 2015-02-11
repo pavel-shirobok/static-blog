@@ -1,0 +1,294 @@
+sb-global-loader {
+  display: table;
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  line-height: 100%;
+}
+sb-global-loader .wrapper {
+  display: table-cell;
+  vertical-align: middle;
+  text-align: center;
+  position: relative;
+}
+sb-spinner {
+  display: inline-block;
+  vertical-align: middle;
+  width: 1em;
+  height: 1em;
+  position: relative;
+  animation: loaderIndicatorBaseAnimation 1s infinite;
+}
+sb-spinner .wrapper .indicator-part:nth-child(0) {
+  transform: rotate(0deg);
+  position: absolute;
+  top: 0.5em;
+  left: 0.5em;
+}
+sb-spinner .wrapper .indicator-part:nth-child(0):after {
+  content: '';
+  display: block;
+  animation: loaderIndicatorPartsAnimation 1.5s 0.1s infinite;
+  animation-timing-function: linear;
+  border-radius: 10px;
+  background: #000;
+  width: 0.1em;
+  height: 0.333em;
+  position: absolute;
+  left: 0.05em;
+  top: 0.15em;
+}
+sb-spinner .wrapper .indicator-part:nth-child(1) {
+  transform: rotate(45deg);
+  position: absolute;
+  top: 0.5em;
+  left: 0.5em;
+}
+sb-spinner .wrapper .indicator-part:nth-child(1):after {
+  content: '';
+  display: block;
+  animation: loaderIndicatorPartsAnimation 1.5s 0.2s infinite;
+  animation-timing-function: linear;
+  border-radius: 10px;
+  background: #000;
+  width: 0.1em;
+  height: 0.333em;
+  position: absolute;
+  left: 0.05em;
+  top: 0.15em;
+}
+sb-spinner .wrapper .indicator-part:nth-child(2) {
+  transform: rotate(90deg);
+  position: absolute;
+  top: 0.5em;
+  left: 0.5em;
+}
+sb-spinner .wrapper .indicator-part:nth-child(2):after {
+  content: '';
+  display: block;
+  animation: loaderIndicatorPartsAnimation 1.5s 0.3s infinite;
+  animation-timing-function: linear;
+  border-radius: 10px;
+  background: #000;
+  width: 0.1em;
+  height: 0.333em;
+  position: absolute;
+  left: 0.05em;
+  top: 0.15em;
+}
+sb-spinner .wrapper .indicator-part:nth-child(3) {
+  transform: rotate(135deg);
+  position: absolute;
+  top: 0.5em;
+  left: 0.5em;
+}
+sb-spinner .wrapper .indicator-part:nth-child(3):after {
+  content: '';
+  display: block;
+  animation: loaderIndicatorPartsAnimation 1.5s 0.4s infinite;
+  animation-timing-function: linear;
+  border-radius: 10px;
+  background: #000;
+  width: 0.1em;
+  height: 0.333em;
+  position: absolute;
+  left: 0.05em;
+  top: 0.15em;
+}
+sb-spinner .wrapper .indicator-part:nth-child(4) {
+  transform: rotate(180deg);
+  position: absolute;
+  top: 0.5em;
+  left: 0.5em;
+}
+sb-spinner .wrapper .indicator-part:nth-child(4):after {
+  content: '';
+  display: block;
+  animation: loaderIndicatorPartsAnimation 1.5s 0.5s infinite;
+  animation-timing-function: linear;
+  border-radius: 10px;
+  background: #000;
+  width: 0.1em;
+  height: 0.333em;
+  position: absolute;
+  left: 0.05em;
+  top: 0.15em;
+}
+sb-spinner .wrapper .indicator-part:nth-child(5) {
+  transform: rotate(225deg);
+  position: absolute;
+  top: 0.5em;
+  left: 0.5em;
+}
+sb-spinner .wrapper .indicator-part:nth-child(5):after {
+  content: '';
+  display: block;
+  animation: loaderIndicatorPartsAnimation 1.5s 0.6s infinite;
+  animation-timing-function: linear;
+  border-radius: 10px;
+  background: #000;
+  width: 0.1em;
+  height: 0.333em;
+  position: absolute;
+  left: 0.05em;
+  top: 0.15em;
+}
+sb-spinner .wrapper .indicator-part:nth-child(6) {
+  transform: rotate(270deg);
+  position: absolute;
+  top: 0.5em;
+  left: 0.5em;
+}
+sb-spinner .wrapper .indicator-part:nth-child(6):after {
+  content: '';
+  display: block;
+  animation: loaderIndicatorPartsAnimation 1.5s 0.7s infinite;
+  animation-timing-function: linear;
+  border-radius: 10px;
+  background: #000;
+  width: 0.1em;
+  height: 0.333em;
+  position: absolute;
+  left: 0.05em;
+  top: 0.15em;
+}
+sb-spinner .wrapper .indicator-part:nth-child(7) {
+  transform: rotate(315deg);
+  position: absolute;
+  top: 0.5em;
+  left: 0.5em;
+}
+sb-spinner .wrapper .indicator-part:nth-child(7):after {
+  content: '';
+  display: block;
+  animation: loaderIndicatorPartsAnimation 1.5s 0.8s infinite;
+  animation-timing-function: linear;
+  border-radius: 10px;
+  background: #000;
+  width: 0.1em;
+  height: 0.333em;
+  position: absolute;
+  left: 0.05em;
+  top: 0.15em;
+}
+sb-spinner .wrapper .indicator-part:nth-child(8) {
+  transform: rotate(360deg);
+  position: absolute;
+  top: 0.5em;
+  left: 0.5em;
+}
+sb-spinner .wrapper .indicator-part:nth-child(8):after {
+  content: '';
+  display: block;
+  animation: loaderIndicatorPartsAnimation 1.5s 0.9s infinite;
+  animation-timing-function: linear;
+  border-radius: 10px;
+  background: #000;
+  width: 0.1em;
+  height: 0.333em;
+  position: absolute;
+  left: 0.05em;
+  top: 0.15em;
+}
+@-moz-keyframes loaderIndicatorBaseAnimation {
+  0% {
+    transform: scale(0.5) rotate(0deg);
+  }
+  50% {
+    transform: scale(1) rotate(180deg);
+  }
+  100% {
+    transform: scale(0.5) rotate(360deg);
+  }
+}
+@-webkit-keyframes loaderIndicatorBaseAnimation {
+  0% {
+    transform: scale(0.5) rotate(0deg);
+  }
+  50% {
+    transform: scale(1) rotate(180deg);
+  }
+  100% {
+    transform: scale(0.5) rotate(360deg);
+  }
+}
+@-o-keyframes loaderIndicatorBaseAnimation {
+  0% {
+    transform: scale(0.5) rotate(0deg);
+  }
+  50% {
+    transform: scale(1) rotate(180deg);
+  }
+  100% {
+    transform: scale(0.5) rotate(360deg);
+  }
+}
+@keyframes loaderIndicatorBaseAnimation {
+  0% {
+    transform: scale(0.5) rotate(0deg);
+  }
+  50% {
+    transform: scale(1) rotate(180deg);
+  }
+  100% {
+    transform: scale(0.5) rotate(360deg);
+  }
+}
+@-moz-keyframes loaderIndicatorPartsAnimation {
+  0% {
+    transform: scaleY(0.1);
+    opacity: 0.5;
+  }
+  50% {
+    transform: scaleY(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scaleY(0.1);
+    opacity: 0.5;
+  }
+}
+@-webkit-keyframes loaderIndicatorPartsAnimation {
+  0% {
+    transform: scaleY(0.1);
+    opacity: 0.5;
+  }
+  50% {
+    transform: scaleY(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scaleY(0.1);
+    opacity: 0.5;
+  }
+}
+@-o-keyframes loaderIndicatorPartsAnimation {
+  0% {
+    transform: scaleY(0.1);
+    opacity: 0.5;
+  }
+  50% {
+    transform: scaleY(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scaleY(0.1);
+    opacity: 0.5;
+  }
+}
+@keyframes loaderIndicatorPartsAnimation {
+  0% {
+    transform: scaleY(0.1);
+    opacity: 0.5;
+  }
+  50% {
+    transform: scaleY(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scaleY(0.1);
+    opacity: 0.5;
+  }
+}

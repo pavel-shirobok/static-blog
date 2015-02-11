@@ -4,7 +4,6 @@ html(lang = "en" ng-app='StaticBlogApp' ng-controller='EntryPointController')
       meta(charset="UTF-8")
       include includes/styles
    body
-      b(ng-bind='message', id='test')
-      i(class='fa fa-spinner')
-      span(class='glyphicon glyphicon-usd')
+      sb-global-loader(size='20px')
+      sb-thread
       include includes/scripts
