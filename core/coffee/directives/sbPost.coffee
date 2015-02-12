@@ -7,4 +7,4 @@ angular
       isShort : '='
     templateUrl : 'templates/sb-post.html'
     controller : ($scope, BlogData)->
-      $scope.post.url = BlogData.getPostUrl $scope.post
+      angular.noop();

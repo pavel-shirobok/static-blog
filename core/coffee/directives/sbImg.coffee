@@ -5,8 +5,8 @@ angular
   scope:
     post : '='
     alt : '@'
-    fileName : '@src'
+    src : '@'
     title : '@'
   templateUrl : 'templates/sb-img.html'
   controller : ($scope, BlogData)->
-    $scope.src = BlogData.getImagePath($scope.post, $scope.fileName);
+    angular.noop()

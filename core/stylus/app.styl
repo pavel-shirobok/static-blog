@@ -6,8 +6,33 @@
 
 html, body
   font-family monospace
+  margin 0
 
-.thread_wrapper
-  margin-top headerHeight
+
+.layout-root
+  width 100%
+  //height 'calc(100% - %s)' % headerHeight
+  margin headerHeight 0 0 0
+
+  .layout-header
+    width 100%
+    height headerHeight
+    position fixed
+    top 0
+    left 0
+
+  .layout-content
+    width 'calc(100% - %s)' % (layoutTreeWidth + contentLeftMargin)
+    height 100%
+    margin-left contentLeftMargin
+
+  .layout-tree
+    width layoutTreeWidth
+    height 500px
+    top  headerHeight
+    right 0
+    position: fixed;
+
+
 
 /*Fonts Raleway, Lato from google*/

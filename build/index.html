@@ -8,11 +8,16 @@
         <link href="css/app.css" rel="stylesheet">
   </head>
   <body>
-    <sb-header blog-name="Test Name of blog"></sb-header>
-    <div class="thread_wrapper">
-      <sb-thread></sb-thread>
-    </div>
     <sb-global-loader size="20px"></sb-global-loader>
+    <div class="layout-root">
+      <div class="layout-header">
+        <sb-header blog-name="Мой блог"></sb-header>
+      </div>
+      <div class="layout-tree">
+        <p>Tree</p>
+      </div>
+      <div ng-view class="layout-content"></div>
+    </div>
         <script src="js/libs.js"></script>
         <script src="js/app.js"></script>
   </body>

@@ -1,7 +1,7 @@
 angular
   .module 'BlogData', []
   .service 'BlogData', ($http, $q) ->
-    #self = this;
+    self = this;
     data = undefined;
 
     contentDir = 'content'
@@ -10,9 +10,31 @@ angular
       .get [contentDir, 'blogDescriptor.json'].join('/')
       .then (d)->
         data = d.data;
-        $(data.posts).each (i, post)->
-          post.date = (new Date(post.directory[0], post.directory[1], post.directory[2])).getTime();
-        return data
+
+        postDataProcessing data
+
+    postDataProcessing = (data)->
+      console.log data
+      injectDataToPosts data
+      loadTree data.tree, data
+      return data
+
+    injectDataToPosts = (data)->
+      $(data.posts).each (i, post)->
+        post.image = ((fileName)->
+          self.getImagePath(this, fileName)).bind(post);
+        post.url = self.getPostUrl post
+        post.date = (new Date(post.directory[0], post.directory[1], post.directory[2])).getTime();
+      return data
+
+    loadTree = (root, data) ->
+      if _.isArray root
+        _.each root, (indexFromTree, itemIndex)->
+          root[itemIndex] = data.posts[indexFromTree];
+      else
+        _.each root, (value, key)->
+          loadTree root[key], data
+
 
     this.getPosts = () ->
       if data?
