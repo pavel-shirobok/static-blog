@@ -5,5 +5,6 @@ angular
     'EntryPointController'
     'sbGlobalLoader'
     'sbSpinner',
-    'sbThread'
+    'sbThread',
+    'sbHeader'
   ]

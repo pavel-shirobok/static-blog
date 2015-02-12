@@ -1,4 +1,4 @@
-angular.module('StaticBlogApp', ['ngRoute', 'EntryPointController', 'sbGlobalLoader', 'sbSpinner', 'sbThread']);
+angular.module('StaticBlogApp', ['ngRoute', 'EntryPointController', 'sbGlobalLoader', 'sbSpinner', 'sbThread', 'sbHeader']);
 
 angular.module('EntryPointController', ['_loader', 'BlogData']).controller('EntryPointController', function($scope, _loader, $timeout, BlogData) {
   _loader.loading(true);
@@ -46,6 +46,19 @@ angular.module('sbGlobalLoader', ['_loader', 'sbSpinner']).directive('sbGlobalLo
         return this;
       };
       return _loader.observe(this.show(false));
+    }
+  };
+});
+
+angular.module('sbHeader', []).directive('sbHeader', function() {
+  return {
+    replace: false,
+    scope: {
+      blogName: '@'
+    },
+    templateUrl: 'templates/sb-header.html',
+    controller: function($scope) {
+      return console.log($scope.blogName);
     }
   };
 });
