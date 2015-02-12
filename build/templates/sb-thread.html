@@ -1,4 +1,6 @@
 
 <div class="wrapper">
+  <sb-pagination-control></sb-pagination-control>
   <sb-post post="post" is-short="true" ng-repeat="post in posts | orderBy:'date':true | sbPaginationFilter"></sb-post>
+  <sb-pagination-control></sb-pagination-control>
 </div>

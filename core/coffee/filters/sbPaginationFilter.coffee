@@ -1,4 +1,4 @@
 angular
   .module 'sbPaginationFilter', []
-  .filter 'sbPaginationFilter', (Blog)->
-    (value)-> value.splice Blog.currentPage * Blog.postsOnPage, Blog.postsOnPage
+  .filter 'sbPaginationFilter', ($rootScope)->
+    (value)-> value.splice $rootScope.currentPage * $rootScope.postsOnPage, $rootScope.postsOnPage

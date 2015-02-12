@@ -1,9 +1,9 @@
-angular.module('StaticBlogApp', ['ngRoute', 'EntryPointController', 'sbGlobalLoader', 'sbSpinner', 'sbThread', 'sbHeader', 'Blog', 'sbPaginationFilter']).config(function($routeProvider, $locationProvider) {
+angular.module('StaticBlogApp', ['ngRoute', 'EntryPointController', 'sbGlobalLoader', 'sbSpinner', 'sbThread', 'sbHeader', 'Blog', 'sbPaginationFilter', 'sbPaginationControl']).config(function($routeProvider, $locationProvider) {
   $locationProvider.html5Mode(false);
-  return $routeProvider.when('/page:num', {
+  return $routeProvider.when('/page:number', {
     templateUrl: 'templates/sb-view-thread.html',
     controller: function(Blog, $routeParams) {
-      return Blog.currentPage = $routeParams.num;
+      return Blog.setCurrentPage(parseInt($routeParams.number));
     }
   }).when('/:year/:month/:day-:name', {
     templateUrl: 'templates/sb-view-post.html',
@@ -100,6 +100,29 @@ angular.module('sbImg', ['BlogData']).directive('sbImg', function() {
   };
 });
 
+angular.module('sbPaginationControl', ['Blog']).directive('sbPaginationControl', function() {
+  return {
+    replace: false,
+    templateUrl: 'templates/sb-pagination-control.html',
+    controller: function($scope, $rootScope, Blog) {
+      $rootScope.$watch('currentPage', function() {
+        return $scope.current = $rootScope.currentPage;
+      });
+      $rootScope.$watch('totalPages', function() {
+        return $scope.total = $rootScope.totalPages;
+      });
+      $scope.canNext = function() {
+        return $scope.current < $scope.total - 1;
+      };
+      $scope.canPrev = function() {
+        return $scope.current > 0;
+      };
+      $scope.next = Blog.nextPage;
+      return $scope.prev = Blog.prevPage;
+    }
+  };
+});
+
 angular.module('sbPost', ['sbCut', 'sbImg']).directive('sbPost', function() {
   return {
     replace: false,
@@ -147,21 +170,23 @@ angular.module('sbThread', ['sbPost', 'BlogData']).directive('sbThread', functio
   };
 });
 
-angular.module('sbPaginationFilter', []).filter('sbPaginationFilter', function(Blog) {
+angular.module('sbPaginationFilter', []).filter('sbPaginationFilter', function($rootScope) {
   return function(value) {
-    return value.splice(Blog.currentPage * Blog.postsOnPage, Blog.postsOnPage);
+    return value.splice($rootScope.currentPage * $rootScope.postsOnPage, $rootScope.postsOnPage);
   };
 });
 
-angular.module('Blog', ['BlogData']).service('Blog', function($q, BlogData, $location) {
+angular.module('Blog', ['BlogData']).service('Blog', function($q, BlogData, $location, $rootScope) {
   var data, defer;
-  this.currentPage = 0;
-  this.postsOnPage = 2;
+  $rootScope.currentPage = 0;
+  $rootScope.postsOnPage = 2;
+  $rootScope.totalPages = 0;
   data = void 0;
   defer = $q.defer();
   defer.promise.then(angular.noop);
   BlogData.getPosts().then(function(d) {
     data = d;
+    $rootScope.totalPages = Math.ceil(data.posts.length / $rootScope.postsOnPage);
     return defer.resolve();
   });
   this.openPost = function(post) {
@@ -189,6 +214,15 @@ angular.module('Blog', ['BlogData']).service('Blog', function($q, BlogData, $loc
     if (data) {
       return defer.resolve();
     }
+  };
+  this.setCurrentPage = function(pageNumber) {
+    return $rootScope.currentPage = pageNumber;
+  };
+  this.nextPage = function() {
+    return $location.path('/page' + ($rootScope.currentPage + 1));
+  };
+  this.prevPage = function() {
+    return $location.path('/page' + ($rootScope.currentPage - 1));
   };
   return this;
 });

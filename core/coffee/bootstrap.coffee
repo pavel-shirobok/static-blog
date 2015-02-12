@@ -8,16 +8,18 @@ angular
     'sbThread',
     'sbHeader',
     'Blog',
-    'sbPaginationFilter'
+    'sbPaginationFilter',
+    'sbPaginationControl'
   ]
   .config ($routeProvider, $locationProvider)->
     $locationProvider.html5Mode false
 
     $routeProvider
-      .when '/page:num',
+      .when '/page:number',
         templateUrl : 'templates/sb-view-thread.html',
         controller : (Blog, $routeParams)->
-          Blog.currentPage = $routeParams.num
+          #TODO check for 'string' number
+          Blog.setCurrentPage(parseInt($routeParams.number));
       .when '/:year/:month/:day-:name',
         templateUrl : 'templates/sb-view-post.html'
         controller : ($scope, Blog, $routeParams)->

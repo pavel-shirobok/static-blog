@@ -1,8 +1,9 @@
 angular
   .module 'Blog', ['BlogData']
-  .service 'Blog', ($q, BlogData, $location)->
-    this.currentPage = 0;
-    this.postsOnPage = 2;
+  .service 'Blog', ($q, BlogData, $location, $rootScope)->
+    $rootScope.currentPage = 0
+    $rootScope.postsOnPage = 2;
+    $rootScope.totalPages = 0;
 
     data = undefined
 
@@ -11,6 +12,7 @@ angular
 
     BlogData.getPosts().then (d)->
       data = d;
+      $rootScope.totalPages = Math.ceil(data.posts.length / $rootScope.postsOnPage);
       defer.resolve();
 
     this.openPost = (post)->
@@ -33,5 +35,10 @@ angular
         )
 
       if data then defer.resolve()
+
+    this.setCurrentPage = (pageNumber)-> $rootScope.currentPage = pageNumber ;
+
+    this.nextPage = ()-> $location.path('/page'+ ($rootScope.currentPage + 1) );
+    this.prevPage = ()-> $location.path('/page' + ($rootScope.currentPage - 1));
 
     return this;
