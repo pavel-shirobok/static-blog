@@ -1,60 +1,3 @@
-sb-global-loader {
-  display: table;
-  position: fixed;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  line-height: 100%;
-}
-sb-global-loader .wrapper {
-  display: table-cell;
-  vertical-align: middle;
-  text-align: center;
-  position: relative;
-}
-sb-header {
-  display: inline-block;
-  width: 100%;
-  height: 100px;
-  background: #fff;
-  position: fixed;
-  top: 0;
-  left: 0;
-}
-sb-header .wrapper {
-  width: 100%;
-  height: 100%;
-}
-sb-header .wrapper .header,
-sb-header .wrapper .search {
-  display: inline-block;
-  width: 100%;
-  height: 100%;
-}
-sb-header .wrapper .header h1 {
-  width: 100%;
-  height: 100%;
-  text-align: center;
-  margin: 0;
-  vertical-align: middle;
-  line-height: 100px;
-}
-sb-header .wrapper .underline {
-  display: block;
-  text-align: center;
-  width: 100%;
-  height: 5px;
-  margin-top: -5px;
-}
-sb-header .wrapper .underline div {
-  display: inline-block;
-  width: 90%;
-  height: 5px;
-  vertical-align: top;
-  border-top: 1px solid #000;
-  border-bottom: 1px solid #000;
-}
 sb-spinner {
   display: inline-block;
   vertical-align: middle;
@@ -334,12 +277,3 @@ sb-spinner .wrapper .indicator-part:nth-child(8):after {
     opacity: 0.5;
   }
 }
-@import url("http://fonts.googleapis.com/css?family=Raleway:500,600,400,300");
-html,
-body {
-  font-family: 'Ubuntu Mono';
-}
-.thread_wrapper {
-  margin-top: 100px;
-}
-/*Fonts Raleway, Lato from google*/

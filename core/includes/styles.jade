@@ -1,5 +1,10 @@
-mixin style(name)
+mixin styleLoc(name)
    link(href='css/'+name+'.css' rel="stylesheet")
 
-+style('libs')
-+style('app')
+mixin styleExt(url)
+   link(href=url rel="stylesheet")
+
++styleExt('http://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700,400italic&subset=latin,cyrillic')
++styleExt('http://fonts.googleapis.com/css?family=Raleway:500,600,400,300')
++styleLoc('libs')
++styleLoc('app')

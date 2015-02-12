@@ -1,0 +1,43 @@
+@import constants
+@import mixins
+
+sb-header
+  display : inline-block
+  width 100%
+  height headerHeight
+  background backgroundColor
+  position fixed
+  top 0
+  left 0
+
+  .wrapper
+    fill-parent()
+
+    .header, .search
+      display inline-block
+      fill-parent()
+
+    .header
+      h1
+        fill-parent()
+        text-align center
+        margin 0
+        vertical-align middle
+        line-height headerHeight
+
+    .underline
+      display block
+      text-align center
+      width 100%
+      height headerUnderlineHeight
+      margin-top - headerUnderlineHeight
+      div
+        display inline-block
+        width headerUnderlineWidth
+        height headerUnderlineHeight
+        vertical-align: top;
+        border-top 1px solid #000000
+        border-bottom 1px solid #000000
+
+
+

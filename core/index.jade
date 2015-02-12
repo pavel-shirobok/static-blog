@@ -4,7 +4,8 @@ html(lang = "en" ng-app='StaticBlogApp' ng-controller='EntryPointController')
       meta(charset="UTF-8")
       include includes/styles
    body
-      sb-global-loader(size='20px')
       sb-header(blog-name="Test Name of blog")
-      sb-thread
+      .thread_wrapper
+         sb-thread
+      sb-global-loader(size='20px')
       include includes/scripts

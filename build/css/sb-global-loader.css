@@ -1,0 +1,15 @@
+sb-global-loader {
+  display: table;
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  line-height: 100%;
+}
+sb-global-loader .wrapper {
+  display: table-cell;
+  vertical-align: middle;
+  text-align: center;
+  position: relative;
+}
