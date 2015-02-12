@@ -1,7 +1,10 @@
-angular.module('StaticBlogApp', ['ngRoute', 'EntryPointController', 'sbGlobalLoader', 'sbSpinner', 'sbThread', 'sbHeader', 'Blog']).config(function($routeProvider, $locationProvider) {
+angular.module('StaticBlogApp', ['ngRoute', 'EntryPointController', 'sbGlobalLoader', 'sbSpinner', 'sbThread', 'sbHeader', 'Blog', 'sbPaginationFilter']).config(function($routeProvider, $locationProvider) {
   $locationProvider.html5Mode(false);
-  return $routeProvider.when('/', {
-    templateUrl: 'templates/sb-view-thread.html'
+  return $routeProvider.when('/page:num', {
+    templateUrl: 'templates/sb-view-thread.html',
+    controller: function(Blog, $routeParams) {
+      return Blog.currentPage = $routeParams.num;
+    }
   }).when('/:year/:month/:day-:name', {
     templateUrl: 'templates/sb-view-post.html',
     controller: function($scope, Blog, $routeParams) {
@@ -9,7 +12,7 @@ angular.module('StaticBlogApp', ['ngRoute', 'EntryPointController', 'sbGlobalLoa
         return $scope.post = post;
       });
     }
-  }).otherwise('/');
+  }).otherwise('/page0');
 });
 
 angular.module('EntryPointController', ['_loader', 'BlogData']).controller('EntryPointController', function($scope, _loader, $timeout, BlogData) {
@@ -144,7 +147,14 @@ angular.module('sbThread', ['sbPost', 'BlogData']).directive('sbThread', functio
   };
 });
 
-angular.module('Blog', ['BlogData']).service('Blog', function($q, BlogData, $rootScope) {
+angular.module('sbPaginationFilter', []).filter('sbPaginationFilter', function(Blog) {
+  return function(value) {
+    console.log('filter call');
+    return value.splice(Blog.currentPage * 2, 2);
+  };
+});
+
+angular.module('Blog', ['BlogData']).service('Blog', function($q, BlogData, $location) {
   var data, defer;
   data = void 0;
   defer = $q.defer();
@@ -155,7 +165,10 @@ angular.module('Blog', ['BlogData']).service('Blog', function($q, BlogData, $roo
   });
   this.openPost = function(post) {
     defer.promise.then(function() {
-      return console.log('Opening post', post.postName);
+      var query;
+      query = post.directory.concat();
+      query[query.length - 1] = post.postFileName;
+      return $location.path(query.join('/'));
     });
     if (data) {
       return defer.resolve();

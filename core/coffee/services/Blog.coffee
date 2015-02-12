@@ -1,6 +1,6 @@
 angular
   .module 'Blog', ['BlogData']
-  .service 'Blog', ($q, BlogData, $rootScope)->
+  .service 'Blog', ($q, BlogData, $location)->
     data = undefined
 
     defer = $q.defer()
@@ -12,7 +12,9 @@ angular
 
     this.openPost = (post)->
       defer.promise.then ()->
-        console.log 'Opening post', post.postName
+        query = post.directory.concat();
+        query[query.length - 1] = post.postFileName;
+        $location.path(query.join('/'));
 
       if data then defer.resolve()
 
