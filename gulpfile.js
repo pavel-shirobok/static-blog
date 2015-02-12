@@ -1,6 +1,6 @@
 var gulp = require('gulp');
 var blog = require('./blog');
-var markdown = require('gulp-markdown');
+var markdown = require('./gulp-extended-markdown');
 var marked = require('marked');
 var jade = require('gulp-jade');
 var concat = require('gulp-concat');

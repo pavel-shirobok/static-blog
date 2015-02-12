@@ -1,6 +1,9 @@
 angular
   .module 'Blog', ['BlogData']
   .service 'Blog', ($q, BlogData, $location)->
+    this.currentPage = 0;
+    this.postsOnPage = 2;
+
     data = undefined
 
     defer = $q.defer()

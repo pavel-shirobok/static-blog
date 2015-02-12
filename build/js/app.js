@@ -149,13 +149,14 @@ angular.module('sbThread', ['sbPost', 'BlogData']).directive('sbThread', functio
 
 angular.module('sbPaginationFilter', []).filter('sbPaginationFilter', function(Blog) {
   return function(value) {
-    console.log('filter call');
-    return value.splice(Blog.currentPage * 2, 2);
+    return value.splice(Blog.currentPage * Blog.postsOnPage, Blog.postsOnPage);
   };
 });
 
 angular.module('Blog', ['BlogData']).service('Blog', function($q, BlogData, $location) {
   var data, defer;
+  this.currentPage = 0;
+  this.postsOnPage = 2;
   data = void 0;
   defer = $q.defer();
   defer.promise.then(angular.noop);
