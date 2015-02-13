@@ -4,7 +4,7 @@ angular
     $rootScope.currentPage = 0
     $rootScope.postsOnPage = 2;
     $rootScope.totalPages = 0;
-
+    #TODO refactor
     data = undefined
 
     defer = $q.defer()

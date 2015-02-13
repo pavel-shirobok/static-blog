@@ -14,7 +14,7 @@ angular
   ]
   .config ($routeProvider, $locationProvider)->
     $locationProvider.html5Mode false
-
+    #todo extract controller to separate modules
     $routeProvider
       .when '/page:number',
         templateUrl : 'templates/sb-view-thread.html',
@@ -24,6 +24,7 @@ angular
       .when '/:year/:month/:day-:name',
         templateUrl : 'templates/sb-view-post.html'
         controller : ($scope, Blog, $routeParams)->
+          #todo remove day and name params, make it simpler
           Blog
             .getPost($routeParams.year, $routeParams.month, $routeParams.day, $routeParams.name)
             .then (post)->

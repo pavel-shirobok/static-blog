@@ -8,3 +8,4 @@ angular
     templateUrl : 'templates/sb-post.html'
     controller : ($scope, BlogData)->
       angular.noop();
+      #TODO extract controller to separate module

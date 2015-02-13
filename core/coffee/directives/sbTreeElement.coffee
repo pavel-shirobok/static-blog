@@ -8,9 +8,9 @@ angular
       type : '@'
       path : '@'
     controller : ($scope, $element, Blog, BlogData, $compile)->
-      console.log('test', $scope.post);
-
-
+      console.log('test', $element, angular.element('<div>'));
+      #TODO refactoring
+      #TODO extract controller to separate module
 
 
 
@@ -45,7 +45,7 @@ angular
               console.log $scope.path , path, temp_path
               #obj = BlogData.getRoot(data.tree, temp_path)
 
-              sb = $('<sb-tree-element>')
+              sb = angular.element('<sb-tree-element>')
               sb.attr 'path', temp_path.join '/'
               #if $scope.post
               #sb.attr 'post', $scope.post?'post':undefined

@@ -180,7 +180,7 @@ angular.module('sbTreeElement', ['BlogData', 'Blog']).directive('sbTreeElement',
       path: '@'
     },
     controller: function($scope, $element, Blog, BlogData, $compile) {
-      console.log('test', $scope.post);
+      console.log('test', $element, angular.element('<div>'));
       return BlogData.getPosts().then(function(data) {
         var path;
         if ($scope.path === '/') {
@@ -207,7 +207,7 @@ angular.module('sbTreeElement', ['BlogData', 'Blog']).directive('sbTreeElement',
             var sb, temp_path;
             temp_path = path.concat(key);
             console.log($scope.path, path, temp_path);
-            sb = $('<sb-tree-element>');
+            sb = angular.element('<sb-tree-element>');
             sb.attr('path', temp_path.join('/'));
             $element.find('.wrapper').append(sb[0]);
             return $compile(sb[0])($scope);

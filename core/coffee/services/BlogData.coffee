@@ -3,7 +3,7 @@ angular
   .service 'BlogData', ($http, $q) ->
     self = this;
     data = undefined;
-
+    #todo refactor
     contentDir = 'content'
 
     dataPromise = $http

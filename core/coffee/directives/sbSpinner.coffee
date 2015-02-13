@@ -9,3 +9,4 @@ angular
       update = ()->$element.css(fontSize : $scope.size)
       update()
       $scope.$watch 'size', update
+      #TODO extract controller to separate module

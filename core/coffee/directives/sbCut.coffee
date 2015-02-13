@@ -7,6 +7,7 @@ angular
     post : '='
   templateUrl : 'templates/sb-cut.html'
   controller : ($scope, $element, Blog)->
+    #TODO extract controller to separate module
     if $scope.isShort
       $element.nextAll().remove();
     else

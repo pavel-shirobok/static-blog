@@ -4,6 +4,7 @@ angular
     replace : false
     templateUrl : 'templates/sb-pagination-control.html'
     controller :($scope, $rootScope, Blog)->
+      #TODO extract controller to separate module
       $rootScope.$watch 'currentPage', ()->
         $scope.current = $rootScope.currentPage
 

@@ -6,3 +6,4 @@ angular
   controller : ($scope, BlogData)->
     BlogData.getPosts().then (data)->
       $scope.posts = data.posts
+#TODO extract controller to separate module
