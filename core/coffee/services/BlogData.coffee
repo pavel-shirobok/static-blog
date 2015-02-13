@@ -9,12 +9,10 @@ angular
     dataPromise = $http
       .get [contentDir, 'blogDescriptor.json'].join('/')
       .then (d)->
-        data = d.data;
-
-        postDataProcessing data
+        data = postDataProcessing d.data;
+        return data
 
     postDataProcessing = (data)->
-      console.log data
       injectDataToPosts data
       loadTree data.tree, data
       return data
@@ -24,16 +22,16 @@ angular
         post.image = ((fileName)->
           self.getImagePath(this, fileName)).bind(post);
         post.url = self.getPostUrl post
-        post.date = (new Date(post.directory[0], post.directory[1], post.directory[2])).getTime();
+        post.date = (new Date(post.date)).getTime();
+        console.log(new Date(post.date))
       return data
 
     loadTree = (root, data) ->
-      if _.isArray root
-        _.each root, (indexFromTree, itemIndex)->
-          root[itemIndex] = data.posts[indexFromTree];
-      else
-        _.each root, (value, key)->
-          loadTree root[key], data
+      _.each root, (value, key)->
+        if _.isNumber value
+          root[key] = data.posts[value];
+        else
+          loadTree value, data
 
 
     this.getPosts = () ->
@@ -43,9 +41,18 @@ angular
         dataPromise
 
     this.getPostUrl = (post)->
-      [contentDir, post.directory[0], post.directory[1], post.postFileName + '.html'].join('/')
+      [contentDir].concat(post.directory, post.postFileName + '.html').join('/')
 
     this.getImagePath = (post, imageFileName)->
       [contentDir, post.directory[0], post.directory[1], imageFileName].join('/')
+
+    this.getRoot = ( root, path )->
+      path = path.concat()
+      if path.length == 0
+        return root
+      if path.length == 1
+        return root[path[0]]
+      else
+        return this.getRoot(root[path.shift()], path)
 
     return this

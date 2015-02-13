@@ -1,4 +1,4 @@
-angular.module('StaticBlogApp', ['ngRoute', 'EntryPointController', 'sbGlobalLoader', 'sbSpinner', 'sbThread', 'sbHeader', 'Blog', 'sbPaginationFilter', 'sbPaginationControl']).config(function($routeProvider, $locationProvider) {
+angular.module('StaticBlogApp', ['ngRoute', 'EntryPointController', 'sbGlobalLoader', 'sbSpinner', 'sbThread', 'sbHeader', 'Blog', 'sbPaginationFilter', 'sbPaginationControl', 'sbTreeElement']).config(function($routeProvider, $locationProvider) {
   $locationProvider.html5Mode(false);
   return $routeProvider.when('/page:number', {
     templateUrl: 'templates/sb-view-thread.html',
@@ -170,6 +170,54 @@ angular.module('sbThread', ['sbPost', 'BlogData']).directive('sbThread', functio
   };
 });
 
+angular.module('sbTreeElement', ['BlogData', 'Blog']).directive('sbTreeElement', function() {
+  return {
+    replace: false,
+    restrict: 'E',
+    templateUrl: 'templates/sb-tree-element.html',
+    scope: {
+      type: '@',
+      path: '@'
+    },
+    controller: function($scope, $element, Blog, BlogData, $compile) {
+      console.log('test', $scope.post);
+      return BlogData.getPosts().then(function(data) {
+        var path;
+        if ($scope.path === '/') {
+          path = [];
+        } else {
+          path = $scope.path.split('/');
+        }
+        $scope.onClick = function() {
+          if ($scope.post) {
+            console.log($scope.post);
+            return Blog.openPost($scope.post);
+          }
+        };
+        if (path.length === 3) {
+          $scope.post = BlogData.getRoot(data.tree, path);
+          return $scope.label = $scope.post.postName;
+        } else {
+          if (path.length === 0) {
+            $scope.label = '/';
+          } else {
+            $scope.label = path[path.length - 1];
+          }
+          return _.each(BlogData.getRoot(data.tree, path), function(value, key) {
+            var sb, temp_path;
+            temp_path = path.concat(key);
+            console.log($scope.path, path, temp_path);
+            sb = $('<sb-tree-element>');
+            sb.attr('path', temp_path.join('/'));
+            $element.find('.wrapper').append(sb[0]);
+            return $compile(sb[0])($scope);
+          });
+        }
+      });
+    }
+  };
+});
+
 angular.module('sbPaginationFilter', []).filter('sbPaginationFilter', function($rootScope) {
   return function(value) {
     return value.splice($rootScope.currentPage * $rootScope.postsOnPage, $rootScope.postsOnPage);
@@ -192,8 +240,7 @@ angular.module('Blog', ['BlogData']).service('Blog', function($q, BlogData, $loc
   this.openPost = function(post) {
     defer.promise.then(function() {
       var query;
-      query = post.directory.concat();
-      query[query.length - 1] = post.postFileName;
+      query = post.directory.concat(post.postFileName);
       return $location.path(query.join('/'));
     });
     if (data) {
@@ -202,14 +249,7 @@ angular.module('Blog', ['BlogData']).service('Blog', function($q, BlogData, $loc
   };
   this.getPost = function(year, month, day, name) {
     return defer.promise.then(function() {
-      var query;
-      query = [year, month, day + '-' + name];
-      return _.find(data.posts, function(post) {
-        var post_q;
-        post_q = post.directory.concat();
-        post_q[post_q.length - 1] = post.postFileName;
-        return _.isEqual(query, post_q);
-      });
+      return BlogData.getRoot(data.tree, [year, month, day + '-' + name]);
     });
     if (data) {
       return defer.resolve();
@@ -233,11 +273,10 @@ angular.module('BlogData', []).service('BlogData', function($http, $q) {
   data = void 0;
   contentDir = 'content';
   dataPromise = $http.get([contentDir, 'blogDescriptor.json'].join('/')).then(function(d) {
-    data = d.data;
-    return postDataProcessing(data);
+    data = postDataProcessing(d.data);
+    return data;
   });
   postDataProcessing = function(data) {
-    console.log(data);
     injectDataToPosts(data);
     loadTree(data.tree, data);
     return data;
@@ -248,20 +287,19 @@ angular.module('BlogData', []).service('BlogData', function($http, $q) {
         return self.getImagePath(this, fileName);
       }).bind(post);
       post.url = self.getPostUrl(post);
-      return post.date = (new Date(post.directory[0], post.directory[1], post.directory[2])).getTime();
+      post.date = (new Date(post.date)).getTime();
+      return console.log(new Date(post.date));
     });
     return data;
   };
   loadTree = function(root, data) {
-    if (_.isArray(root)) {
-      return _.each(root, function(indexFromTree, itemIndex) {
-        return root[itemIndex] = data.posts[indexFromTree];
-      });
-    } else {
-      return _.each(root, function(value, key) {
-        return loadTree(root[key], data);
-      });
-    }
+    return _.each(root, function(value, key) {
+      if (_.isNumber(value)) {
+        return root[key] = data.posts[value];
+      } else {
+        return loadTree(value, data);
+      }
+    });
   };
   this.getPosts = function() {
     if (data != null) {
@@ -273,10 +311,21 @@ angular.module('BlogData', []).service('BlogData', function($http, $q) {
     }
   };
   this.getPostUrl = function(post) {
-    return [contentDir, post.directory[0], post.directory[1], post.postFileName + '.html'].join('/');
+    return [contentDir].concat(post.directory, post.postFileName + '.html').join('/');
   };
   this.getImagePath = function(post, imageFileName) {
     return [contentDir, post.directory[0], post.directory[1], imageFileName].join('/');
+  };
+  this.getRoot = function(root, path) {
+    path = path.concat();
+    if (path.length === 0) {
+      return root;
+    }
+    if (path.length === 1) {
+      return root[path[0]];
+    } else {
+      return this.getRoot(root[path.shift()], path);
+    }
   };
   return this;
 });

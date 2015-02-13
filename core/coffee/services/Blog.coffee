@@ -17,28 +17,21 @@ angular
 
     this.openPost = (post)->
       defer.promise.then ()->
-        query = post.directory.concat();
-        query[query.length - 1] = post.postFileName;
+        query = post.directory.concat(post.postFileName)
         $location.path(query.join('/'));
 
       if data then defer.resolve()
 
     this.getPost = (year, month, day, name)->
       return defer.promise.then ()->
-        query = [year, month, day + '-' + name];
-        _.find(
-          data.posts,
-          (post)->
-            post_q = post.directory.concat();
-            post_q[post_q.length-1] = post.postFileName
-            return _.isEqual(query, post_q)
-        )
+        return BlogData.getRoot(data.tree, [year, month, day + '-' + name])
+
 
       if data then defer.resolve()
 
-    this.setCurrentPage = (pageNumber)-> $rootScope.currentPage = pageNumber ;
+    this.setCurrentPage = (pageNumber) -> $rootScope.currentPage = pageNumber ;
 
-    this.nextPage = ()-> $location.path('/page'+ ($rootScope.currentPage + 1) );
-    this.prevPage = ()-> $location.path('/page' + ($rootScope.currentPage - 1));
+    this.nextPage = () -> $location.path( '/page' + ($rootScope.currentPage + 1) );
+    this.prevPage = () -> $location.path( '/page' + ($rootScope.currentPage - 1) );
 
     return this;

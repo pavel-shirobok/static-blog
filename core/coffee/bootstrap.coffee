@@ -9,7 +9,8 @@ angular
     'sbHeader',
     'Blog',
     'sbPaginationFilter',
-    'sbPaginationControl'
+    'sbPaginationControl',
+    'sbTreeElement'
   ]
   .config ($routeProvider, $locationProvider)->
     $locationProvider.html5Mode false
