@@ -8,7 +8,7 @@ angular
       type : '@'
       path : '@'
     controller : ($scope, $element, Blog, BlogData, $compile)->
-      console.log('test', $element, angular.element('<div>'));
+      #console.log('test', $element, angular.element('<div>'));
       #TODO refactoring
       #TODO extract controller to separate module
 
@@ -26,7 +26,7 @@ angular
           $scope.onClick = ()->
 
             if $scope.post
-              console.log $scope.post
+              #console.log $scope.post
               Blog.openPost($scope.post)
 
 
@@ -42,7 +42,7 @@ angular
 
             _.each BlogData.getRoot(data.tree, path), (value, key)->
               temp_path = path.concat key
-              console.log $scope.path , path, temp_path
+              #console.log $scope.path , path, temp_path
               #obj = BlogData.getRoot(data.tree, temp_path)
 
               sb = angular.element('<sb-tree-element>')

@@ -10,10 +10,14 @@ angular
     'Blog',
     'sbPaginationFilter',
     'sbPaginationControl',
-    'sbTreeElement'
+    'sbTreeElement',
+    'ngDisqus'
   ]
-  .config ($routeProvider, $locationProvider)->
+  .config ($routeProvider, $locationProvider, $disqusProvider)->
     $locationProvider.html5Mode false
+    $locationProvider.hashPrefix('!');
+    $disqusProvider.setShortname('blog-ramshteks');
+
     #todo extract controller to separate modules
     $routeProvider
       .when '/page:number',

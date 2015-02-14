@@ -1,5 +1,7 @@
-angular.module('StaticBlogApp', ['ngRoute', 'EntryPointController', 'sbGlobalLoader', 'sbSpinner', 'sbThread', 'sbHeader', 'Blog', 'sbPaginationFilter', 'sbPaginationControl', 'sbTreeElement']).config(function($routeProvider, $locationProvider) {
+angular.module('StaticBlogApp', ['ngRoute', 'EntryPointController', 'sbGlobalLoader', 'sbSpinner', 'sbThread', 'sbHeader', 'Blog', 'sbPaginationFilter', 'sbPaginationControl', 'sbTreeElement', 'ngDisqus']).config(function($routeProvider, $locationProvider, $disqusProvider) {
   $locationProvider.html5Mode(false);
+  $locationProvider.hashPrefix('!');
+  $disqusProvider.setShortname('blog-ramshteks');
   return $routeProvider.when('/page:number', {
     templateUrl: 'templates/sb-view-thread.html',
     controller: function(Blog, $routeParams) {
@@ -71,15 +73,17 @@ angular.module('sbGlobalLoader', ['_loader', 'sbSpinner']).directive('sbGlobalLo
   };
 });
 
-angular.module('sbHeader', []).directive('sbHeader', function() {
+angular.module('sbHeader', ['Blog']).directive('sbHeader', function() {
   return {
     replace: false,
     scope: {
       blogName: '@'
     },
     templateUrl: 'templates/sb-header.html',
-    controller: function($scope) {
-      return console.log($scope.blogName);
+    controller: function($scope, Blog) {
+      return $scope.openPage = function() {
+        return Blog.openPage(0);
+      };
     }
   };
 });
@@ -180,7 +184,6 @@ angular.module('sbTreeElement', ['BlogData', 'Blog']).directive('sbTreeElement',
       path: '@'
     },
     controller: function($scope, $element, Blog, BlogData, $compile) {
-      console.log('test', $element, angular.element('<div>'));
       return BlogData.getPosts().then(function(data) {
         var path;
         if ($scope.path === '/') {
@@ -190,7 +193,6 @@ angular.module('sbTreeElement', ['BlogData', 'Blog']).directive('sbTreeElement',
         }
         $scope.onClick = function() {
           if ($scope.post) {
-            console.log($scope.post);
             return Blog.openPost($scope.post);
           }
         };
@@ -206,7 +208,6 @@ angular.module('sbTreeElement', ['BlogData', 'Blog']).directive('sbTreeElement',
           return _.each(BlogData.getRoot(data.tree, path), function(value, key) {
             var sb, temp_path;
             temp_path = path.concat(key);
-            console.log($scope.path, path, temp_path);
             sb = angular.element('<sb-tree-element>');
             sb.attr('path', temp_path.join('/'));
             $element.find('.wrapper').append(sb[0]);
@@ -220,7 +221,9 @@ angular.module('sbTreeElement', ['BlogData', 'Blog']).directive('sbTreeElement',
 
 angular.module('sbPaginationFilter', []).filter('sbPaginationFilter', function($rootScope) {
   return function(value) {
-    return value.splice($rootScope.currentPage * $rootScope.postsOnPage, $rootScope.postsOnPage);
+    if (value != null) {
+      return value.splice($rootScope.currentPage * $rootScope.postsOnPage, $rootScope.postsOnPage);
+    }
   };
 });
 
@@ -263,6 +266,9 @@ angular.module('Blog', ['BlogData']).service('Blog', function($q, BlogData, $loc
   };
   this.prevPage = function() {
     return $location.path('/page' + ($rootScope.currentPage - 1));
+  };
+  this.openPage = function(index) {
+    return $location.path('/page' + index);
   };
   return this;
 });

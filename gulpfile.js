@@ -8,6 +8,9 @@ var coffee = require('gulp-coffee');
 var gutil  = require('gulp-util');
 var watch = require('gulp-watch');
 var stylus = require('gulp-stylus');
+var fs = require('fs');
+
+var ngtemplate = require('./jade-auto-ng-template')
 
 var JADE_SRC = ['core/**/*.jade', '!core/includes/*.jade'];
 var JS_LIBS = [
@@ -15,6 +18,7 @@ var JS_LIBS = [
     'core/jslibs/lodash.js',
     'core/jslibs/angular.js',
     'core/jslibs/angular-route.js',
+    'core/jslibs/angular-disqus.js',
     'core/jslibs/bootstrap.js',
     'core/jslibs/prefixfree.js'
 ];
@@ -63,9 +67,11 @@ gulp.task('blog:img', function(){
 gulp.task('blog:full', ['blog:img', 'blog:posts']);
 
 gulp.task('core:jade', function(){
+
     return gulp
-        .src(JADE_SRC)
-        .pipe(jade({pretty: true}))
+        .src('core/index.jade')
+        .pipe(ngtemplate(fs.readdirSync('./core/templates'), 'templates'))
+        .pipe(jade({ pretty: true }))
         .pipe( gulp.dest('build/') )
 });
 

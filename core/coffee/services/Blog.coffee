@@ -34,4 +34,6 @@ angular
     this.nextPage = () -> $location.path( '/page' + ($rootScope.currentPage + 1) );
     this.prevPage = () -> $location.path( '/page' + ($rootScope.currentPage - 1) );
 
+    this.openPage = (index)-> $location.path( '/page' + index)
+
     return this;
