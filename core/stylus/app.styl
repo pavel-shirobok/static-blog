@@ -1,37 +1,19 @@
 @import constants
-@import "sb-global-loader"
-@import 'sb-header';
-@import "sb-spinner";
-@import url(http://fonts.googleapis.com/css?family=Raleway:500,600,400,300);
+
+@import layouts
+
+@import sb-global-loader
+@import sb-header
+@import sb-spinner
 
 html, body
   font-family monospace
   margin 0
+  color  fontColor
+  background backgroundColor
 
 
-.layout-root
-  width 100%
-  //height 'calc(100% - %s)' % headerHeight
-  margin headerHeight 0 0 0
 
-  .layout-header
-    width 100%
-    height headerHeight
-    position fixed
-    top 0
-    left 0
-
-  .layout-content
-    width 'calc(100% - %s)' % (layoutTreeWidth + contentLeftMargin)
-    height 100%
-    margin-left contentLeftMargin
-
-  .layout-tree
-    width layoutTreeWidth
-    height 500px
-    top  headerHeight
-    right 0
-    position: fixed;
 
 
 

@@ -1,37 +1,100 @@
-angular.module('StaticBlogApp', ['ngRoute', 'EntryPointController', 'sbGlobalLoader', 'sbSpinner', 'sbThread', 'sbHeader', 'Blog', 'sbPaginationFilter', 'sbPaginationControl', 'sbTreeElement', 'ngDisqus']).config(function($routeProvider, $locationProvider, $disqusProvider) {
+angular.module('StaticBlogApp', ['sbRouting', 'sbGlobalLoader', 'sbHeader', 'sbThread', 'sbTreeElement']);
+
+angular.module('sbConstants', []).constant('CONTENT_ROOT', 'content').constant('DESCRIPTOR_FILE_NAME', 'blogDescriptor.json').constant('DISQUS_SHORT_NAME', 'blog-ramshteks');
+
+angular.module('sbRouting', ['ngDisqus', 'ngRoute', 'sbConstants', 'BootstrapStateCtrl', 'ThreadViewStateCtrl', 'PostViewStateCtrl']).config(function($routeProvider, $locationProvider, $disqusProvider, DISQUS_SHORT_NAME) {
   $locationProvider.html5Mode(false);
   $locationProvider.hashPrefix('!');
-  $disqusProvider.setShortname('blog-ramshteks');
-  return $routeProvider.when('/page:number', {
+  $disqusProvider.setShortname(DISQUS_SHORT_NAME);
+  $routeProvider.when('/loading', {
+    template: '',
+    controller: 'BootstrapStateCtrl'
+  }).when('/page:pageIndex', {
     templateUrl: 'templates/sb-view-thread.html',
-    controller: function(Blog, $routeParams) {
-      return Blog.setCurrentPage(parseInt($routeParams.number));
-    }
-  }).when('/:year/:month/:day-:name', {
+    controller: 'ThreadViewStateCtrl'
+  }).when('/:year/:month/:name', {
     templateUrl: 'templates/sb-view-post.html',
-    controller: function($scope, Blog, $routeParams) {
-      return Blog.getPost($routeParams.year, $routeParams.month, $routeParams.day, $routeParams.name).then(function(post) {
-        return $scope.post = post;
+    controller: 'PostViewStateCtrl'
+  }).otherwise('/loading');
+  return this;
+});
+
+angular.module('sbCutCtrl', ['sbBlog']).controller('sbCutCtrl', function($scope, $element, sbBlog) {
+  if ($scope.isShort) {
+    $element.nextAll().remove();
+  } else {
+    $element.remove();
+  }
+  return $scope.open = sbBlog.openPost;
+});
+
+angular.module('sbGlobalLoaderCtrl', ['sbLoadingManager']).controller('sbGlobalLoaderCtrl', function($scope, $element, sbLoadingManager) {
+  var initial, observable;
+  initial = $element.css('display');
+  observable = {
+    show: function(state) {
+      $scope.loading = state;
+      return observable;
+    }
+  };
+  $scope.$watch('loading', function() {
+    return $element.css('display', $scope.loading ? initial : 'none');
+  });
+  observable.show(false);
+  return sbLoadingManager.observe(observable);
+});
+
+angular.module('sbHeaderCtrl', ['sbBlog']).controller('sbHeaderCtrl', function($scope, sbBlog) {
+  $scope.toMain = sbBlog.toMain;
+  return this;
+});
+
+angular.module("sbSpinnerCtrl", []).controller("sbSpinnerCtrl", function($scope, $element) {
+  var update;
+  update = function() {
+    return $element.css({
+      fontSize: $scope.size
+    });
+  };
+  return $scope.$watch('size', update);
+});
+
+angular.module("sbTreeElementCtrl", ["sbBlog", "sbBlogData"]).controller("sbTreeElementCtrl", function($scope, $element, sbBlog, sbBlogData, $compile) {
+  var createTree;
+  $scope.onClick = function() {
+    if ($scope.post) {
+      return sbBlog.openPost($scope.post);
+    }
+  };
+  createTree = function() {
+    var path;
+    if ($scope.path === '/') {
+      path = [];
+    } else {
+      path = $scope.path.split('/');
+    }
+    if (path.length === 3) {
+      $scope.post = sbBlogData.getRoot(sbBlogData.data.tree, path);
+      return $scope.label = $scope.post.postName;
+    } else {
+      if (path.length === 0) {
+        $scope.label = '/';
+      } else {
+        $scope.label = path[path.length - 1];
+      }
+      return _.each(sbBlogData.getRoot(sbBlogData.data.tree, path), function(value, key) {
+        var newTreeElement, temp_path;
+        temp_path = path.concat(key);
+        newTreeElement = angular.element('<sb-tree-element>').attr('path', temp_path.join('/')).appendTo($element.find('.wrapper'));
+        return $compile(newTreeElement)($scope);
       });
     }
-  }).otherwise('/page0');
+  };
+  sbBlogData.load().then(createTree);
+  return this;
 });
 
-angular.module('EntryPointController', ['_loader', 'BlogData']).controller('EntryPointController', function($scope, _loader, $timeout, BlogData) {
-  _loader.loading(true);
-  return BlogData.getPosts().then(function(data) {
-    console.log(data);
-    return _loader.loading(false);
-  });
-});
-
-angular.module('ThreadViewCtrl', ['BlogData']).controller('ThreadViewCtrl', function($scope, BlogData) {
-  return BlogData.getPosts().then(function(data) {
-    return $scope.posts = data.posts;
-  });
-});
-
-angular.module('sbCut', ['Blog']).directive('sbCut', function() {
+angular.module('sbCut', ['sbCutCtrl']).directive('sbCut', function() {
   return {
     replace: false,
     scope: {
@@ -39,18 +102,11 @@ angular.module('sbCut', ['Blog']).directive('sbCut', function() {
       post: '='
     },
     templateUrl: 'templates/sb-cut.html',
-    controller: function($scope, $element, Blog) {
-      if ($scope.isShort) {
-        $element.nextAll().remove();
-      } else {
-        $element.remove();
-      }
-      return $scope.open = Blog.openPost;
-    }
+    controller: 'sbCutCtrl'
   };
 });
 
-angular.module('sbGlobalLoader', ['_loader', 'sbSpinner']).directive('sbGlobalLoader', function() {
+angular.module('sbGlobalLoader', ['sbGlobalLoaderCtrl', 'sbSpinner']).directive('sbGlobalLoader', function() {
   return {
     replace: false,
     restrict: 'E',
@@ -58,37 +114,22 @@ angular.module('sbGlobalLoader', ['_loader', 'sbSpinner']).directive('sbGlobalLo
     scope: {
       size: '@'
     },
-    controller: function($scope, $element, _loader) {
-      var initial;
-      initial = $element.css('display');
-      $scope.$watch('loading', function() {
-        return $element.css('display', $scope.loading ? initial : 'none');
-      });
-      this.show = function(state) {
-        $scope.loading = state;
-        return this;
-      };
-      return _loader.observe(this.show(false));
-    }
+    controller: 'sbGlobalLoaderCtrl'
   };
 });
 
-angular.module('sbHeader', ['Blog']).directive('sbHeader', function() {
+angular.module('sbHeader', ['sbBlog', 'sbHeaderCtrl']).directive('sbHeader', function() {
   return {
     replace: false,
     scope: {
       blogName: '@'
     },
     templateUrl: 'templates/sb-header.html',
-    controller: function($scope, Blog) {
-      return $scope.openPage = function() {
-        return Blog.openPage(0);
-      };
-    }
+    controller: 'sbHeaderCtrl'
   };
 });
 
-angular.module('sbImg', ['BlogData']).directive('sbImg', function() {
+angular.module('sbImg', ['sbBlogData']).directive('sbImg', function() {
   return {
     replace: false,
     scope: {
@@ -97,32 +138,17 @@ angular.module('sbImg', ['BlogData']).directive('sbImg', function() {
       src: '@',
       title: '@'
     },
-    templateUrl: 'templates/sb-img.html',
-    controller: function($scope, BlogData) {
-      return angular.noop();
-    }
+    templateUrl: 'templates/sb-img.html'
   };
 });
 
-angular.module('sbPaginationControl', ['Blog']).directive('sbPaginationControl', function() {
+angular.module('sbPaginationControl', ['sbBlog']).directive('sbPaginationControl', function() {
   return {
     replace: false,
     templateUrl: 'templates/sb-pagination-control.html',
-    controller: function($scope, $rootScope, Blog) {
-      $rootScope.$watch('currentPage', function() {
-        return $scope.current = $rootScope.currentPage;
-      });
-      $rootScope.$watch('totalPages', function() {
-        return $scope.total = $rootScope.totalPages;
-      });
-      $scope.canNext = function() {
-        return $scope.current < $scope.total - 1;
-      };
-      $scope.canPrev = function() {
-        return $scope.current > 0;
-      };
-      $scope.next = Blog.nextPage;
-      return $scope.prev = Blog.prevPage;
+    controller: function($scope, $rootScope, sbBlog) {
+      $scope.current = 0;
+      return $scope.total = 10;
     }
   };
 });
@@ -134,14 +160,11 @@ angular.module('sbPost', ['sbCut', 'sbImg']).directive('sbPost', function() {
       post: '=',
       isShort: '='
     },
-    templateUrl: 'templates/sb-post.html',
-    controller: function($scope, BlogData) {
-      return angular.noop();
-    }
+    templateUrl: 'templates/sb-post.html'
   };
 });
 
-angular.module('sbSpinner', []).directive('sbSpinner', function() {
+angular.module('sbSpinner', ['sbSpinnerCtrl']).directive('sbSpinner', function() {
   return {
     replace: false,
     restrict: 'E',
@@ -149,32 +172,23 @@ angular.module('sbSpinner', []).directive('sbSpinner', function() {
     scope: {
       size: '@'
     },
-    controller: function($scope, $element) {
-      var update;
-      update = function() {
-        return $element.css({
-          fontSize: $scope.size
-        });
-      };
-      update();
-      return $scope.$watch('size', update);
-    }
+    controller: "sbSpinnerCtrl"
   };
 });
 
-angular.module('sbThread', ['sbPost', 'BlogData']).directive('sbThread', function() {
+angular.module('sbThread', ['sbPost', 'sbBlogData', 'sbPaginationFilter']).directive('sbThread', function() {
   return {
     replace: false,
     templateUrl: 'templates/sb-thread.html',
-    controller: function($scope, BlogData) {
-      return BlogData.getPosts().then(function(data) {
-        return $scope.posts = data.posts;
-      });
+    controller: function($scope, sbBlogData) {
+      if (sbBlogData.data) {
+        return $scope.posts = sbBlogData.data.posts;
+      }
     }
   };
 });
 
-angular.module('sbTreeElement', ['BlogData', 'Blog']).directive('sbTreeElement', function() {
+angular.module('sbTreeElement', ['sbTreeElementCtrl']).directive('sbTreeElement', function() {
   return {
     replace: false,
     restrict: 'E',
@@ -183,146 +197,107 @@ angular.module('sbTreeElement', ['BlogData', 'Blog']).directive('sbTreeElement',
       type: '@',
       path: '@'
     },
-    controller: function($scope, $element, Blog, BlogData, $compile) {
-      return BlogData.getPosts().then(function(data) {
-        var path;
-        if ($scope.path === '/') {
-          path = [];
-        } else {
-          path = $scope.path.split('/');
-        }
-        $scope.onClick = function() {
-          if ($scope.post) {
-            return Blog.openPost($scope.post);
-          }
-        };
-        if (path.length === 3) {
-          $scope.post = BlogData.getRoot(data.tree, path);
-          return $scope.label = $scope.post.postName;
-        } else {
-          if (path.length === 0) {
-            $scope.label = '/';
-          } else {
-            $scope.label = path[path.length - 1];
-          }
-          return _.each(BlogData.getRoot(data.tree, path), function(value, key) {
-            var sb, temp_path;
-            temp_path = path.concat(key);
-            sb = angular.element('<sb-tree-element>');
-            sb.attr('path', temp_path.join('/'));
-            $element.find('.wrapper').append(sb[0]);
-            return $compile(sb[0])($scope);
-          });
-        }
-      });
-    }
+    controller: "sbTreeElementCtrl"
   };
 });
 
-angular.module('sbPaginationFilter', []).filter('sbPaginationFilter', function($rootScope) {
-  return function(value) {
+angular.module('sbView', ['ngRoute']).directive('sbView', function() {
+  return {
+    replace: false,
+    template: '<div ng-view></div>'
+  };
+});
+
+angular.module('sbPaginationFilter', []).filter('sbPaginationFilter', function() {
+  return function(value, currentPage, postsPerPage) {
     if (value != null) {
-      return value.splice($rootScope.currentPage * $rootScope.postsOnPage, $rootScope.postsOnPage);
+      return value.splice(currentPage * postsPerPage, postsPerPage);
     }
   };
 });
 
-angular.module('Blog', ['BlogData']).service('Blog', function($q, BlogData, $location, $rootScope) {
-  var data, defer;
-  $rootScope.currentPage = 0;
-  $rootScope.postsOnPage = 2;
-  $rootScope.totalPages = 0;
-  data = void 0;
-  defer = $q.defer();
-  defer.promise.then(angular.noop);
-  BlogData.getPosts().then(function(d) {
-    data = d;
-    $rootScope.totalPages = Math.ceil(data.posts.length / $rootScope.postsOnPage);
-    return defer.resolve();
-  });
-  this.openPost = function(post) {
-    defer.promise.then(function() {
-      var query;
-      query = post.directory.concat(post.postFileName);
-      return $location.path(query.join('/'));
-    });
-    if (data) {
-      return defer.resolve();
+angular.module('sbBlog', ['sbBlogData']).service('sbBlog', function($q, sbBlogData, $location, $rootScope) {
+  var self;
+  self = this;
+  self.loadingState = function() {
+    return $location.path('loading');
+  };
+  self.toMain = function() {
+    return self.openPage(0);
+  };
+  self.openPage = function(index) {
+    return $location.path('page' + index);
+  };
+  self.saveRedirectPath = function(_at_path) {
+    this.path = _at_path;
+  };
+  self.restorePath = function() {
+    if (self.path && self.path !== '/loading') {
+      return $location.path(self.path);
+    } else {
+      return self.toMain();
     }
   };
-  this.getPost = function(year, month, day, name) {
-    return defer.promise.then(function() {
-      return BlogData.getRoot(data.tree, [year, month, day + '-' + name]);
-    });
-    if (data) {
-      return defer.resolve();
-    }
+  self.openPost = function(post) {
+    return $location.path(post.directory.concat(post.postFileName).join('/'));
   };
-  this.setCurrentPage = function(pageNumber) {
-    return $rootScope.currentPage = pageNumber;
-  };
-  this.nextPage = function() {
-    return $location.path('/page' + ($rootScope.currentPage + 1));
-  };
-  this.prevPage = function() {
-    return $location.path('/page' + ($rootScope.currentPage - 1));
-  };
-  this.openPage = function(index) {
-    return $location.path('/page' + index);
+  self.getPostByPath = function(year, month, name) {
+    return sbBlogData.getRoot(sbBlogData.data.tree, [year, month, name]);
   };
   return this;
 });
 
-angular.module('BlogData', []).service('BlogData', function($http, $q) {
-  var contentDir, data, dataPromise, injectDataToPosts, loadTree, postDataProcessing, self;
+angular.module('sbBlogData', ['sbConstants']).service('sbBlogData', function($http, $q, CONTENT_ROOT, DESCRIPTOR_FILE_NAME) {
+  var self;
   self = this;
-  data = void 0;
-  contentDir = 'content';
-  dataPromise = $http.get([contentDir, 'blogDescriptor.json'].join('/')).then(function(d) {
-    data = postDataProcessing(d.data);
-    return data;
-  });
-  postDataProcessing = function(data) {
-    injectDataToPosts(data);
-    loadTree(data.tree, data);
-    return data;
+  self.data = void 0;
+  self.loadingPromise = void 0;
+  self.load = function() {
+    var loadingPromise;
+    if (!loadingPromise) {
+      loadingPromise = $http.get(self.path([CONTENT_ROOT, DESCRIPTOR_FILE_NAME])).then(function(raw) {
+        return self.data = self.preProcessData(raw.data);
+      });
+    }
+    return loadingPromise;
   };
-  injectDataToPosts = function(data) {
-    $(data.posts).each(function(i, post) {
+  self.preProcessData = function(raw) {
+    self.extendPosts(raw);
+    self.loadPostsInTree(raw.tree, raw);
+    return raw;
+  };
+  self.extendPosts = function(raw) {
+    _.each(raw.posts, function(post) {
       post.image = (function(fileName) {
         return self.getImagePath(this, fileName);
       }).bind(post);
       post.url = self.getPostUrl(post);
-      post.date = (new Date(post.date)).getTime();
-      return console.log(new Date(post.date));
+      return post.date = (new Date(post.date)).getTime();
     });
-    return data;
+    return raw;
   };
-  loadTree = function(root, data) {
+  self.loadPostsInTree = function(root, data) {
     return _.each(root, function(value, key) {
       if (_.isNumber(value)) {
         return root[key] = data.posts[value];
       } else {
-        return loadTree(value, data);
+        return self.loadPostsInTree(value, data);
       }
     });
   };
-  this.getPosts = function() {
-    if (data != null) {
-      return $q(function(resolve) {
-        return resolve(data);
-      });
-    } else {
-      return dataPromise;
-    }
+  self.path = function(arr) {
+    return arr.join('/');
   };
-  this.getPostUrl = function(post) {
-    return [contentDir].concat(post.directory, post.postFileName + '.html').join('/');
+  self.postPath = function(post, fileName) {
+    return self.path([CONTENT_ROOT].concat(post.directory, fileName));
   };
-  this.getImagePath = function(post, imageFileName) {
-    return [contentDir, post.directory[0], post.directory[1], imageFileName].join('/');
+  self.getPostUrl = function(post) {
+    return self.postPath(post, post.postFileName + '.html');
   };
-  this.getRoot = function(root, path) {
+  self.getImagePath = function(post, fileName) {
+    return self.postPath(post, fileName);
+  };
+  self.getRoot = function(root, path) {
     path = path.concat();
     if (path.length === 0) {
       return root;
@@ -336,7 +311,7 @@ angular.module('BlogData', []).service('BlogData', function($http, $q) {
   return this;
 });
 
-angular.module('_loader', []).service('_loader', function() {
+angular.module('sbLoadingManager', []).service('sbLoadingManager', function() {
   var self;
   self = this;
   self.indicators = [];
@@ -345,6 +320,12 @@ angular.module('_loader', []).service('_loader', function() {
     self.indicators.push(loaderIndicator);
     return loaderIndicator.show(self.state);
   };
+  self.loadingOn = function() {
+    return self.loading(true);
+  };
+  self.loadingOff = function() {
+    return self.loading(false);
+  };
   self.loading = function(state) {
     self.state = state;
     return _.each(self.indicators, function(indicator) {
@@ -352,4 +333,39 @@ angular.module('_loader', []).service('_loader', function() {
     });
   };
   return true;
+});
+
+angular.module('BootstrapStateCtrl', ['sbBlogData', 'sbLoadingManager', 'sbBlog']).controller('BootstrapStateCtrl', function($scope, $timeout, sbBlogData, sbBlog, sbLoadingManager) {
+  var bootstrapApp;
+  sbLoadingManager.loadingOn();
+  bootstrapApp = function() {
+    sbLoadingManager.loadingOff();
+    return sbBlog.restorePath();
+  };
+  if (sbBlogData.data) {
+    bootstrapApp();
+  } else {
+    sbBlogData.load().then(bootstrapApp);
+  }
+  return this;
+});
+
+angular.module('PostViewStateCtrl', ['ngRoute', 'sbBlog', 'sbBlogData']).controller('PostViewStateCtrl', function($scope, sbBlog, sbBlogData, $location, $routeParams) {
+  if (sbBlogData.data) {
+    $scope.post = sbBlog.getPostByPath($routeParams.year, $routeParams.month, $routeParams.name);
+  } else {
+    sbBlog.saveRedirectPath($location.path());
+    sbBlog.loadingState();
+  }
+  return this;
+});
+
+angular.module('ThreadViewStateCtrl', ['sbBlog', 'sbBlogData', 'ngRoute']).controller('ThreadViewStateCtrl', function(sbBlogData, sbBlog, $routeParams, $location) {
+  if (sbBlogData.data) {
+
+  } else {
+    sbBlog.saveRedirectPath($location.path());
+    sbBlog.loadingState();
+  }
+  return this;
 });

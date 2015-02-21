@@ -1,5 +1,5 @@
 angular
-.module 'sbImg', ['BlogData']
+.module 'sbImg', ['sbBlogData']
 .directive 'sbImg', ()->
   replace : false
   scope:
@@ -8,6 +8,3 @@ angular
     src : '@'
     title : '@'
   templateUrl : 'templates/sb-img.html'
-  controller : ($scope, BlogData)->
-    angular.noop()
-    #TODO extract controller to separate module

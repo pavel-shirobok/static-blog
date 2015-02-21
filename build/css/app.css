@@ -1,3 +1,41 @@
+.layout-root {
+  width: 100%;
+  margin: 100px 0 0 0;
+}
+.layout-root .layout-header {
+  width: 100%;
+  height: 100px;
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+.layout-root .underline {
+  display: block;
+  text-align: center;
+  width: 100%;
+  height: 3px;
+  margin-top: -6px;
+}
+.layout-root .underline div {
+  display: inline-block;
+  width: 100%;
+  height: 3px;
+  vertical-align: top;
+  border-top: 2px solid #555;
+  border-bottom: 1px solid #555;
+}
+.layout-root .layout-content {
+  width: calc(100% - 400px);
+  height: 100%;
+  margin-left: 100px;
+}
+.layout-root .layout-tree {
+  width: 300px;
+  height: 500px;
+  top: 100px;
+  right: 0;
+  position: fixed;
+}
 sb-global-loader {
   display: table;
   position: fixed;
@@ -17,7 +55,7 @@ sb-header {
   width: 100%;
   height: 100%;
   display: inline-block;
-  background: #fff;
+  background: #f8f8f8;
 }
 sb-header .wrapper {
   width: 100%;
@@ -38,21 +76,6 @@ sb-header .wrapper .header h1 {
   margin: 0;
   vertical-align: middle;
   line-height: 100px;
-}
-sb-header .wrapper .underline {
-  display: block;
-  text-align: center;
-  width: 100%;
-  height: 5px;
-  margin-top: -10px;
-}
-sb-header .wrapper .underline div {
-  display: inline-block;
-  width: 90%;
-  height: 5px;
-  vertical-align: top;
-  border-top: 1px solid #000;
-  border-bottom: 1px solid #000;
 }
 sb-spinner {
   display: inline-block;
@@ -333,33 +356,11 @@ sb-spinner .wrapper .indicator-part:nth-child(8):after {
     opacity: 0.5;
   }
 }
-@import url("http://fonts.googleapis.com/css?family=Raleway:500,600,400,300");
 html,
 body {
   font-family: monospace;
   margin: 0;
-}
-.layout-root {
-  width: 100%;
-  margin: 100px 0 0 0;
-}
-.layout-root .layout-header {
-  width: 100%;
-  height: 100px;
-  position: fixed;
-  top: 0;
-  left: 0;
-}
-.layout-root .layout-content {
-  width: calc(100% - 400px);
-  height: 100%;
-  margin-left: 100px;
-}
-.layout-root .layout-tree {
-  width: 300px;
-  height: 500px;
-  top: 100px;
-  right: 0;
-  position: fixed;
+  color: #555;
+  background: #f8f8f8;
 }
 /*Fonts Raleway, Lato from google*/

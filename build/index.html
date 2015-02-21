@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" ng-app="StaticBlogApp" ng-controller="EntryPointController">
+<html lang="en" ng-app="StaticBlogApp">
   <head>
     <meta charset="UTF-8">
     <!--+styleExt('http://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700,400italic&subset=latin,cyrillic')-->
@@ -15,14 +15,10 @@
     <script type="text/ng-template" id="templates/sb-header.html">
       <div class="wrapper">
         <div class="header">
-          <h1 ng-click="openPage()">{{blogName}}</h1>
+          <h1 ng-click="toMain()">{{blogName}}</h1>
         </div>
         <div style="display:none" class="search">
-          <!--TODO panel-->
           <p>Search panel</p>
-        </div>
-        <div class="underline">
-          <div></div>
         </div>
       </div>
     </script>
@@ -53,7 +49,7 @@
     <script type="text/ng-template" id="templates/sb-thread.html">
       <div class="wrapper">
         <sb-pagination-control></sb-pagination-control>
-        <sb-post post="post" is-short="true" ng-repeat="post in posts | orderBy:'date':true | sbPaginationFilter"></sb-post>
+        <sb-post post="post" is-short="true" ng-repeat="post in posts | orderBy:'date':true | sbPaginationFilter:0:2"></sb-post>
         <sb-pagination-control></sb-pagination-control>
       </div>
     </script>
@@ -71,15 +67,22 @@
     </script>
   </head>
   <body>
+    <!--.background(style="position:fixed; top:0; left:0; z-index: 1000000000")-->
+    <!--   svg-->
+    <!--      defs-->
+    <!--         filter(id='f1', x=0, y=0)-->
+    <!--            feGaussianBlur(in="SourceGraphic" stdDeviation="15" )-->
+    <!--      circle(cx=50, cy=50, r=40, stroke=green, stroke-width=4 fill="#ff000000" filter="url(#f1)")-->
     <sb-global-loader size="20px"></sb-global-loader>
+    <!--div(sb-app)-->
     <div class="layout-root">
       <div class="layout-header">
         <sb-header blog-name="Мой блог"></sb-header>
       </div>
+      <div ng-view class="layout-content"></div>
       <div class="layout-tree">
         <sb-tree-element path="/"></sb-tree-element>
       </div>
-      <div ng-view class="layout-content"></div>
     </div>
         <script src="js/libs.js"></script>
         <script src="js/app.js"></script>

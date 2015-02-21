@@ -1,0 +1,38 @@
+@import constants
+
+.layout-root
+  width 100%
+  margin headerHeight 0 0 0
+
+  .layout-header
+    width 100%
+    height headerHeight
+    position fixed
+    top 0
+    left 0
+
+  .underline
+    display block
+    text-align center
+    width 100%
+    height headerUnderlineHeight
+    margin-top - (headerUnderlineHeight * 2)
+    div
+      display inline-block
+      width headerUnderlineWidth
+      height headerUnderlineHeight
+      vertical-align top
+      border-top 2px solid linesColor
+      border-bottom 1px solid linesColor
+
+  .layout-content
+    width 'calc(100% - %s)' % (layoutTreeWidth + contentLeftMargin)
+    height 100%
+    margin-left contentLeftMargin
+
+  .layout-tree
+    width layoutTreeWidth
+    height 500px
+    top  headerHeight
+    right 0
+    position: fixed;
