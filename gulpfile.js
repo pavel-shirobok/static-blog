@@ -1,5 +1,5 @@
 var gulp = require('gulp');
-var blog = require('./blog');
+var blog = require('./plugin/static-blog-plugin');
 var markdown = require('./gulp-extended-markdown');
 var marked = require('marked');
 var jadePlugin = require('gulp-jade');
@@ -29,33 +29,10 @@ var CSS_APP = ['core/stylus/app.styl'];
 var FONTS = ['core/fonts/*.*'];
 
 gulp.task('blog:posts', function(){
-    var customRenderer = new marked.Renderer();
-    var oldHead = customRenderer.heading.bind(customRenderer);
-
-    var cut = false;
-    customRenderer.heading = function(text, level, raw) {
-        if(!cut && text =='cut' && level == 1) {
-            cut = true;
-            return '<sb-cut post="post" is-short="isShort"></sb-cut>';
-        }
-        return oldHead(text, level, raw);
-    };
-
-    var oldImage = customRenderer.image.bind(customRenderer);
-
-    customRenderer.image = function(href, title, text) {
-
-         if(href.indexOf('http://')==0 || href.indexOf('https://')== 0){
-            return oldImage(href, title, text);
-         }
-
-         return '<sb-img post="post" src="' + href + '" title="'+ title+'" alt="' + text+'"></sb-img>';
-     };
-
     gulp
         .src  ( 'content/**/*.md' )
-        .pipe ( blog('build/content') )
-        .pipe ( markdown({renderer : customRenderer}) )
+        .pipe ( blog('build', 'content') )
+        /*.pipe ( markdown({renderer : customRenderer}) )*/
         .pipe ( gulp.dest('build/content') )
 });
 
@@ -72,8 +49,8 @@ gulp.task('core:jade', function(){
     var templates = fs.readdirSync('./core/templates');
 
     templates = _.map(templates, function(path) {
-        path = 'templates/' + path.replace('jade', 'html');
         var content = fs.readFileSync('./core/templates/' + path, {encoding: 'utf8'});
+        path = 'templates/' + path.replace('jade', 'html');
         //noinspection JSCheckFunctionSignatures
         content = jade.render(content);
         return { path:path,  content : content };

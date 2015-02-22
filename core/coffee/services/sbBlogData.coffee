@@ -20,8 +20,6 @@ angular
 
     self.extendPosts = (raw) ->
       _.each raw.posts, (post)->
-        post.image = ((fileName)->
-          self.getImagePath(this, fileName)).bind(post);
         post.url = self.getPostUrl post
         post.date = (new Date(post.date)).getTime();
       return raw
@@ -39,7 +37,6 @@ angular
     self.postPath = (post, fileName)->self.path [CONTENT_ROOT].concat(post.directory, fileName)
 
     self.getPostUrl = (post)-> self.postPath post, post.postFileName + '.html'
-    self.getImagePath = (post, fileName) -> self.postPath post, fileName
     self.getRoot = ( root, path ) ->
       path = path.concat()
       if path.length == 0

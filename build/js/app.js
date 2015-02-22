@@ -291,9 +291,6 @@ angular.module('sbBlogData', ['sbConstants']).service('sbBlogData', function($ht
   };
   self.extendPosts = function(raw) {
     _.each(raw.posts, function(post) {
-      post.image = (function(fileName) {
-        return self.getImagePath(this, fileName);
-      }).bind(post);
       post.url = self.getPostUrl(post);
       return post.date = (new Date(post.date)).getTime();
     });
@@ -316,9 +313,6 @@ angular.module('sbBlogData', ['sbConstants']).service('sbBlogData', function($ht
   };
   self.getPostUrl = function(post) {
     return self.postPath(post, post.postFileName + '.html');
-  };
-  self.getImagePath = function(post, fileName) {
-    return self.postPath(post, fileName);
   };
   self.getRoot = function(root, path) {
     path = path.concat();
