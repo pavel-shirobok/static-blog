@@ -49,6 +49,21 @@ angular.module('sbHeaderCtrl', ['sbBlog']).controller('sbHeaderCtrl', function($
   return this;
 });
 
+angular.module('sbPaginationControlCtrl', []).controller('sbPaginationControlCtrl', function($scope) {
+  $scope.next = function() {
+    return $scope.current++;
+  };
+  $scope.prev = function() {
+    return $scope.current--;
+  };
+  $scope.canNext = function() {
+    return $scope.current < $scope.total - 1;
+  };
+  return $scope.canPrev = function() {
+    return $scope.current > 0;
+  };
+});
+
 angular.module("sbSpinnerCtrl", []).controller("sbSpinnerCtrl", function($scope, $element) {
   var update;
   update = function() {
@@ -57,6 +72,12 @@ angular.module("sbSpinnerCtrl", []).controller("sbSpinnerCtrl", function($scope,
     });
   };
   return $scope.$watch('size', update);
+});
+
+angular.module('sbThreadCtrl', ['sbBlogData']).controller('sbThreadCtrl', function($scope, sbBlogData) {
+  if (sbBlogData.data) {
+    return $scope.posts = sbBlogData.data.posts;
+  }
 });
 
 angular.module("sbTreeElementCtrl", ["sbBlog", "sbBlogData"]).controller("sbTreeElementCtrl", function($scope, $element, sbBlog, sbBlogData, $compile) {
@@ -142,14 +163,15 @@ angular.module('sbImg', ['sbBlogData']).directive('sbImg', function() {
   };
 });
 
-angular.module('sbPaginationControl', ['sbBlog']).directive('sbPaginationControl', function() {
+angular.module('sbPaginationControl', ['sbPaginationControlCtrl']).directive('sbPaginationControl', function() {
   return {
     replace: false,
+    scope: {
+      total: '=',
+      current: '='
+    },
     templateUrl: 'templates/sb-pagination-control.html',
-    controller: function($scope, $rootScope, sbBlog) {
-      $scope.current = 0;
-      return $scope.total = 10;
-    }
+    controller: 'sbPaginationControlCtrl'
   };
 });
 
@@ -176,15 +198,16 @@ angular.module('sbSpinner', ['sbSpinnerCtrl']).directive('sbSpinner', function()
   };
 });
 
-angular.module('sbThread', ['sbPost', 'sbBlogData', 'sbPaginationFilter']).directive('sbThread', function() {
+angular.module('sbThread', ['sbThreadCtrl', 'sbPaginationFilter', 'sbPost']).directive('sbThread', function() {
   return {
     replace: false,
+    scope: {
+      current: '=',
+      total: '=',
+      ppp: '='
+    },
     templateUrl: 'templates/sb-thread.html',
-    controller: function($scope, sbBlogData) {
-      if (sbBlogData.data) {
-        return $scope.posts = sbBlogData.data.posts;
-      }
-    }
+    controller: 'sbThreadCtrl'
   };
 });
 
@@ -201,17 +224,10 @@ angular.module('sbTreeElement', ['sbTreeElementCtrl']).directive('sbTreeElement'
   };
 });
 
-angular.module('sbView', ['ngRoute']).directive('sbView', function() {
-  return {
-    replace: false,
-    template: '<div ng-view></div>'
-  };
-});
-
 angular.module('sbPaginationFilter', []).filter('sbPaginationFilter', function() {
-  return function(value, currentPage, postsPerPage) {
+  return function(value, current, ppp) {
     if (value != null) {
-      return value.splice(currentPage * postsPerPage, postsPerPage);
+      return value.splice(current * ppp, ppp);
     }
   };
 });
@@ -243,6 +259,13 @@ angular.module('sbBlog', ['sbBlogData']).service('sbBlog', function($q, sbBlogDa
   };
   self.getPostByPath = function(year, month, name) {
     return sbBlogData.getRoot(sbBlogData.data.tree, [year, month, name]);
+  };
+  self.paginationModel = function(index) {
+    return {
+      page: index,
+      total: Math.ceil(sbBlogData.data.posts.length / 2),
+      ppp: 2
+    };
   };
   return this;
 });
@@ -360,9 +383,14 @@ angular.module('PostViewStateCtrl', ['ngRoute', 'sbBlog', 'sbBlogData']).control
   return this;
 });
 
-angular.module('ThreadViewStateCtrl', ['sbBlog', 'sbBlogData', 'ngRoute']).controller('ThreadViewStateCtrl', function(sbBlogData, sbBlog, $routeParams, $location) {
+angular.module('ThreadViewStateCtrl', ['sbBlog', 'sbBlogData', 'ngRoute', 'sbPaginationControl']).controller('ThreadViewStateCtrl', function($scope, sbBlogData, sbBlog, $routeParams, $location) {
   if (sbBlogData.data) {
-
+    $scope.paginationModel = sbBlog.paginationModel(parseInt($routeParams.pageIndex));
+    $scope.$watch('paginationModel.page', function(newValue, oldValue) {
+      if (newValue !== oldValue) {
+        return sbBlog.openPage(newValue);
+      }
+    });
   } else {
     sbBlog.saveRedirectPath($location.path());
     sbBlog.loadingState();

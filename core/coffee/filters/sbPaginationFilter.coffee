@@ -1,5 +1,4 @@
 angular
   .module 'sbPaginationFilter', []
   .filter 'sbPaginationFilter', ()->
-    (value, currentPage, postsPerPage)->
-      if value? then value.splice currentPage * postsPerPage, postsPerPage
+    (value, current, ppp) -> if value? then value.splice current * ppp, ppp

@@ -48,9 +48,7 @@
     </script>
     <script type="text/ng-template" id="templates/sb-thread.html">
       <div class="wrapper">
-        <sb-pagination-control></sb-pagination-control>
-        <sb-post post="post" is-short="true" ng-repeat="post in posts | orderBy:'date':true | sbPaginationFilter:0:2"></sb-post>
-        <sb-pagination-control></sb-pagination-control>
+        <sb-post post="post" is-short="true" ng-repeat="post in posts | orderBy:'date':true | sbPaginationFilter:current:ppp"></sb-post>
       </div>
     </script>
     <script type="text/ng-template" id="templates/sb-tree-element.html">
@@ -62,8 +60,11 @@
       <h1 ng-hide="post">Unknown post</h1>
     </script>
     <script type="text/ng-template" id="templates/sb-view-thread.html">
-      <!--TODO extend it-->
-      <sb-thread></sb-thread>
+      <div class="wrapper">
+        <sb-pagination-control current="paginationModel.page" total="paginationModel.total"></sb-pagination-control>
+        <sb-thread current="paginationModel.page" total="paginationModel.total" ppp="paginationModel.ppp"></sb-thread>
+        <sb-pagination-control current="paginationModel.page" total="paginationModel.total"></sb-pagination-control>
+      </div>
     </script>
   </head>
   <body>

@@ -356,6 +356,9 @@ sb-spinner .wrapper .indicator-part:nth-child(8):after {
     opacity: 0.5;
   }
 }
+sb-img img {
+  max-width: 100%;
+}
 html,
 body {
   font-family: monospace;

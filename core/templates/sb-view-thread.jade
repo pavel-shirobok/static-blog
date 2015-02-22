@@ -1,2 +1,4 @@
-//TODO extend it
-sb-thread
+.wrapper
+    sb-pagination-control(current='paginationModel.page' total='paginationModel.total')
+    sb-thread(current='paginationModel.page' total='paginationModel.total' ppp='paginationModel.ppp')
+    sb-pagination-control(current='paginationModel.page' total='paginationModel.total')

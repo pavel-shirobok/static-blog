@@ -1,7 +1,5 @@
 .wrapper
-   sb-pagination-control
    sb-post(
       post='post' is-short='true'
-      ng-repeat="post in posts | orderBy:'date':true | sbPaginationFilter:0:2"
+      ng-repeat="post in posts | orderBy:'date':true | sbPaginationFilter:current:ppp"
    )
-   sb-pagination-control

@@ -1,10 +1,10 @@
 angular
-.module 'sbThread', ['sbPost', 'sbBlogData', 'sbPaginationFilter']
+.module 'sbThread', ['sbThreadCtrl', 'sbPaginationFilter', 'sbPost']
 .directive 'sbThread', ()->
   replace : false
+  scope :
+    current : '='
+    total   : '='
+    ppp     : '='
   templateUrl : 'templates/sb-thread.html'
-  controller : ($scope, sbBlogData)->
-    if sbBlogData.data
-      $scope.posts = sbBlogData.data.posts
-
-#TODO extract controller to separate module
+  controller : 'sbThreadCtrl'
