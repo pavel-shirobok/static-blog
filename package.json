@@ -19,5 +19,9 @@
     "gulp-watch": "^4.1.0",
     "marked": "^0.3.3",
     "through2": "^0.6.3"
+  },
+  "devDependencies": {
+    "jade": "^1.9.2",
+    "lodash": "^3.3.0"
   }
 }

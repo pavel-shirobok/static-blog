@@ -7,75 +7,19 @@
         <link href="css/libs.css" rel="stylesheet">
         <link href="css/app.css" rel="stylesheet">
     <script type="text/ng-template" id="templates/sb-cut.html"><button ng-click="open(post)">read</button></script>
-    <script type="text/ng-template" id="templates/sb-global-loader.html">
-      <div class="wrapper"><span ng-style="{&quot;font-size&quot; : size }" style="vertical-align:middle">Loading &nbsp;</span>
-        <sb-spinner size="{{size}}"></sb-spinner>
-      </div>
-    </script>
-    <script type="text/ng-template" id="templates/sb-header.html">
-      <div class="wrapper">
-        <div class="header">
-          <h1 ng-click="toMain()">{{blogName}}</h1>
-        </div>
-        <div style="display:none" class="search">
-          <p>Search panel</p>
-        </div>
-      </div>
-    </script>
+    <script type="text/ng-template" id="templates/sb-global-loader.html"><div class="wrapper"><span ng-style="{&quot;font-size&quot; : size }" style="vertical-align:middle">Loading &nbsp;</span><sb-spinner size="{{size}}"></sb-spinner></div></script>
+    <script type="text/ng-template" id="templates/sb-header.html"><div class="wrapper"><div class="header"><h1 ng-click="toMain()">{{blogName}}</h1></div><div style="display:none" class="search"><p>Search panel</p></div></div></script>
     <script type="text/ng-template" id="templates/sb-img.html"><img ng-src='{{post.image(src)}}' ng-title='{{title}}' ng-alt='{{alt}}'></script>
-    <script type="text/ng-template" id="templates/sb-pagination-control.html">
-      <div class="wrapper">
-        <button ng-show="canPrev()" ng-click="prev()">&#65513;</button><span ng-bind="current + 1"></span><span>/</span><span ng-bind="total"></span>
-        <button ng-show="canNext()" ng-click="next()">&#65515;</button>
-      </div>
-    </script>
-    <script type="text/ng-template" id="templates/sb-post.html">
-      <div class="wrapper">
-        <ng-include src="post.url"></ng-include>
-      </div>
-    </script>
-    <script type="text/ng-template" id="templates/sb-spinner.html">
-      <div class="wrapper">
-        <div class="indicator-part"></div>
-        <div class="indicator-part"></div>
-        <div class="indicator-part"></div>
-        <div class="indicator-part"></div>
-        <div class="indicator-part"></div>
-        <div class="indicator-part"></div>
-        <div class="indicator-part"></div>
-        <div class="indicator-part"></div>
-      </div>
-    </script>
-    <script type="text/ng-template" id="templates/sb-thread.html">
-      <div class="wrapper">
-        <sb-post post="post" is-short="true" ng-repeat="post in posts | orderBy:'date':true | sbPaginationFilter:current:ppp"></sb-post>
-      </div>
-    </script>
-    <script type="text/ng-template" id="templates/sb-tree-element.html">
-      <div style="margin-left:10px" class="wrapper"><span ng-bind="label" ng-click="onClick()"></span></div>
-    </script>
-    <script type="text/ng-template" id="templates/sb-view-post.html">
-      <sb-post post="post" is-short="false" ng-show="post"></sb-post>
-      <div ng-show="post" disqus="post.postName"></div>
-      <h1 ng-hide="post">Unknown post</h1>
-    </script>
-    <script type="text/ng-template" id="templates/sb-view-thread.html">
-      <div class="wrapper">
-        <sb-pagination-control current="paginationModel.page" total="paginationModel.total"></sb-pagination-control>
-        <sb-thread current="paginationModel.page" total="paginationModel.total" ppp="paginationModel.ppp"></sb-thread>
-        <sb-pagination-control current="paginationModel.page" total="paginationModel.total"></sb-pagination-control>
-      </div>
-    </script>
+    <script type="text/ng-template" id="templates/sb-pagination-control.html"><div class="wrapper"><button ng-show="canPrev()" ng-click="prev()">&#65513;</button><span ng-bind="current + 1"></span><span>/</span><span ng-bind="total"></span><button ng-show="canNext()" ng-click="next()">&#65515;</button></div></script>
+    <script type="text/ng-template" id="templates/sb-post.html"><div class="wrapper"><ng-include src="post.url"></ng-include></div></script>
+    <script type="text/ng-template" id="templates/sb-spinner.html"><div class="wrapper"><div class="indicator-part"></div><div class="indicator-part"></div><div class="indicator-part"></div><div class="indicator-part"></div><div class="indicator-part"></div><div class="indicator-part"></div><div class="indicator-part"></div><div class="indicator-part"></div></div></script>
+    <script type="text/ng-template" id="templates/sb-thread.html"><div class="wrapper"><sb-post post="post" is-short="true" ng-repeat="post in posts | orderBy:'date':true | sbPaginationFilter:current:ppp"></sb-post></div></script>
+    <script type="text/ng-template" id="templates/sb-tree-element.html"><div style="margin-left:10px" class="wrapper"><span ng-bind="label" ng-click="onClick()"></span></div></script>
+    <script type="text/ng-template" id="templates/sb-view-post.html"><sb-post post="post" is-short="false" ng-show="post"></sb-post><div ng-show="post" disqus="post.postName"></div><h1 ng-hide="post">Unknown post</h1></script>
+    <script type="text/ng-template" id="templates/sb-view-thread.html"><div class="wrapper"><sb-pagination-control current="paginationModel.page" total="paginationModel.total"></sb-pagination-control><sb-thread current="paginationModel.page" total="paginationModel.total" ppp="paginationModel.ppp"></sb-thread><sb-pagination-control current="paginationModel.page" total="paginationModel.total"></sb-pagination-control></div></script>
   </head>
   <body>
-    <!--.background(style="position:fixed; top:0; left:0; z-index: 1000000000")-->
-    <!--   svg-->
-    <!--      defs-->
-    <!--         filter(id='f1', x=0, y=0)-->
-    <!--            feGaussianBlur(in="SourceGraphic" stdDeviation="15" )-->
-    <!--      circle(cx=50, cy=50, r=40, stroke=green, stroke-width=4 fill="#ff000000" filter="url(#f1)")-->
     <sb-global-loader size="20px"></sb-global-loader>
-    <!--div(sb-app)-->
     <div class="layout-root">
       <div class="layout-header">
         <sb-header blog-name="Мой блог"></sb-header>

@@ -2,15 +2,16 @@ var gulp = require('gulp');
 var blog = require('./blog');
 var markdown = require('./gulp-extended-markdown');
 var marked = require('marked');
-var jade = require('gulp-jade');
+var jadePlugin = require('gulp-jade');
 var concat = require('gulp-concat');
 var coffee = require('gulp-coffee');
 var gutil  = require('gulp-util');
 var watch = require('gulp-watch');
 var stylus = require('gulp-stylus');
 var fs = require('fs');
+var jade = require('jade');
 
-var ngtemplate = require('./jade-auto-ng-template')
+var _ = require('lodash');
 
 var JADE_SRC = ['core/**/*.jade', '!core/includes/*.jade'];
 var JS_LIBS = [
@@ -68,10 +69,22 @@ gulp.task('blog:full', ['blog:img', 'blog:posts']);
 
 gulp.task('core:jade', function(){
 
+    var templates = fs.readdirSync('./core/templates');
+
+    templates = _.map(templates, function(path) {
+        path = 'templates/' + path.replace('jade', 'html');
+        var content = fs.readFileSync('./core/templates/' + path, {encoding: 'utf8'});
+        //noinspection JSCheckFunctionSignatures
+        content = jade.render(content);
+        return { path:path,  content : content };
+    });
+
     return gulp
         .src('core/index.jade')
-        .pipe(ngtemplate(fs.readdirSync('./core/templates'), 'templates'))
-        .pipe(jade({ pretty: true }))
+        .pipe(jadePlugin({
+                pretty: true,
+                locals: {templates: templates}
+        }))
         .pipe( gulp.dest('build/') )
 });
 
