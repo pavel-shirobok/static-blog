@@ -1,57 +1,19 @@
 {
     "posts": [
         {
-            "postName": "Long post",
-            "postFileName": "01-long-post",
-            "directory": [
-                "2014",
-                "03"
-            ],
-            "date": "2014/03/01"
-        },
-        {
-            "postName": "31.12.2014",
-            "postFileName": "31-0",
-            "directory": [
-                "2014",
-                "12"
-            ],
-            "date": "2014/12/31"
-        },
-        {
-            "postName": "01.02.2015",
-            "postFileName": "06-0",
-            "directory": [
-                "2015",
-                "01"
-            ],
-            "date": "2015/01/06"
-        },
-        {
-            "postName": "02.02.2015",
-            "postFileName": "06-0",
+            "postName": "Голь на выдумки хитра",
+            "postFileName": "21-first-post",
             "directory": [
                 "2015",
                 "02"
             ],
-            "date": "2015/02/06"
+            "date": "2015/02/21"
         }
     ],
     "tree": {
-        "2014": {
-            "12": {
-                "31-0": 1
-            },
-            "03": {
-                "01-long-post": 0
-            }
-        },
         "2015": {
-            "01": {
-                "06-0": 2
-            },
             "02": {
-                "06-0": 3
+                "21-first-post": 0
             }
         }
     }
