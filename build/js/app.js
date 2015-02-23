@@ -115,6 +115,28 @@ angular.module("sbTreeElementCtrl", ["sbBlog", "sbBlogData"]).controller("sbTree
   return this;
 });
 
+angular.module('sbCode', []).directive('sbCode', function() {
+  return {
+    replace: false,
+    scope: {
+      lang: '@'
+    },
+    controller: function($scope, $element) {
+      hljs.configure({
+        useBR: false
+      });
+      return hljs.highlightBlock($element.addClass($scope.lang)[0]);
+
+      /*hljs.highlightBlock(
+        $element
+          .find '.wrapper'
+          .addClass($scope.lang)[0]
+      )
+       */
+    }
+  };
+});
+
 angular.module('sbCut', ['sbCutCtrl']).directive('sbCut', function() {
   return {
     replace: false,
@@ -175,7 +197,7 @@ angular.module('sbPaginationControl', ['sbPaginationControlCtrl']).directive('sb
   };
 });
 
-angular.module('sbPost', ['sbCut', 'sbImg']).directive('sbPost', function() {
+angular.module('sbPost', ['sbCut', 'sbImg', 'sbCode']).directive('sbPost', function() {
   return {
     replace: false,
     scope: {
@@ -273,6 +295,7 @@ angular.module('sbBlog', ['sbBlogData']).service('sbBlog', function($q, sbBlogDa
 angular.module('sbBlogData', ['sbConstants']).service('sbBlogData', function($http, $q, CONTENT_ROOT, DESCRIPTOR_FILE_NAME) {
   var self;
   self = this;
+  self.timePatch = 0;
   self.data = void 0;
   self.loadingPromise = void 0;
   self.load = function() {
@@ -292,7 +315,7 @@ angular.module('sbBlogData', ['sbConstants']).service('sbBlogData', function($ht
   self.extendPosts = function(raw) {
     _.each(raw.posts, function(post) {
       post.url = self.getPostUrl(post);
-      return post.date = (new Date(post.date)).getTime();
+      return post.date = (new Date(post.date)).getTime() + (++self.timePatch);
     });
     return raw;
   };

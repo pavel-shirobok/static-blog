@@ -359,6 +359,11 @@ sb-spinner .wrapper .indicator-part:nth-child(8):after {
 sb-img img {
   max-width: 100%;
 }
+code[sb-code] {
+  display: inline-block !important;
+  vertical-align: middle;
+  white-space: pre-wrap;
+}
 html,
 body {
   font-family: monospace;

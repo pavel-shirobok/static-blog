@@ -8,6 +8,7 @@ var watch = require('gulp-watch');
 var stylus = require('gulp-stylus');
 var fs = require('fs');
 var jade = require('jade');
+var imageop = require('gulp-image-optimization');
 
 var _ = require('lodash');
 
@@ -15,6 +16,7 @@ var JADE_SRC = ['core/**/*.jade', '!core/includes/*.jade'];
 var JS_LIBS = [
     'core/jslibs/jquery-1.11.2.js',
     'core/jslibs/lodash.js',
+    'core/jslibs/highlight.pack.js',
     'core/jslibs/angular.js',
     'core/jslibs/angular-route.js',
     'core/jslibs/angular-disqus.js',
@@ -29,14 +31,18 @@ var FONTS = ['core/fonts/*.*'];
 gulp.task('blog:posts', function(){
     gulp
         .src  ( 'content/**/*.md' )
-        .pipe ( blog('build', 'content') )
-        /*.pipe ( markdown({renderer : customRenderer}) )*/
-        .pipe ( gulp.dest('build/content') )
+        .pipe ( blog('build', 'content'   ) )
+        .pipe ( gulp.dest('build/content' ) )
 });
 
 gulp.task('blog:img', function(){
     return gulp
         .src( ['content/**/*.jpg', 'content/**/*.png', 'content/**/*.gif'] )
+        .pipe(imageop({
+            optimizationLevel: 5,
+            progressive: true,
+            interlaced: true
+        }))
         .pipe(gulp.dest('build/content'));
 });
 

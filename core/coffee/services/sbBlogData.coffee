@@ -2,7 +2,7 @@ angular
   .module 'sbBlogData', ['sbConstants']
   .service 'sbBlogData', ($http, $q, CONTENT_ROOT, DESCRIPTOR_FILE_NAME) ->
     self = this
-
+    self.timePatch = 0;
     self.data = undefined
     self.loadingPromise = undefined
     self.load = ()->
@@ -21,7 +21,7 @@ angular
     self.extendPosts = (raw) ->
       _.each raw.posts, (post)->
         post.url = self.getPostUrl post
-        post.date = (new Date(post.date)).getTime();
+        post.date = (new Date(post.date)).getTime() + (++self.timePatch);
       return raw
 
     self.loadPostsInTree = (root, data) ->

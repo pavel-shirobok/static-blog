@@ -54,6 +54,12 @@ StaticBlogGenerator.prototype.initRenderer = function() {
         return '<sb-img post="post" src="' + href + '" title="'+ title+'" alt="' + text+'"></sb-img>';
     }.bind(this);
 
+    this.renderer.code = this.renderer.codespan = function(code, lang) {
+        lang = lang || 'auto';
+        return '<code sb-code lang="' + lang + '">' + code + '</code>'
+    }.bind(this);
+
+
     this.options.renderer = this.renderer;
 };
 
@@ -88,7 +94,7 @@ StaticBlogGenerator.prototype.computePost = function(file, options, cb) {
     this.registerPost(file, this.post);
 };
 
-StaticBlogGenerator.prototype.registerPost = function(file, postData) {
+StaticBlogGenerator.prototype.registerPost = function(file) {
     var postPath = this.getInContentDirectoryWithPost(file.path, file.base, false);
     var postName = this.post.name;
 
