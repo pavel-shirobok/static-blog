@@ -364,6 +364,10 @@ code[sb-code] {
   vertical-align: middle;
   white-space: pre-wrap;
 }
+h1[sb-post-header].link {
+  cursor: pointer;
+  text-decoration: underline;
+}
 html,
 body {
   font-family: monospace;

@@ -197,7 +197,7 @@ angular.module('sbPaginationControl', ['sbPaginationControlCtrl']).directive('sb
   };
 });
 
-angular.module('sbPost', ['sbCut', 'sbImg', 'sbCode']).directive('sbPost', function() {
+angular.module('sbPost', ['sbCut', 'sbImg', 'sbCode', 'sbPostHeader']).directive('sbPost', function() {
   return {
     replace: false,
     scope: {
@@ -205,6 +205,24 @@ angular.module('sbPost', ['sbCut', 'sbImg', 'sbCode']).directive('sbPost', funct
       isShort: '='
     },
     templateUrl: 'templates/sb-post.html'
+  };
+});
+
+angular.module('sbPostHeader', ['sbBlog']).directive('sbPostHeader', function() {
+  return {
+    scope: {
+      post: '=',
+      isLink: '='
+    },
+    controller: function($scope, $element, sbBlog) {
+      $element.removeClass('link');
+      if ($scope.isLink) {
+        return $element.addClass('link').click(function() {
+          sbBlog.openPost($scope.post);
+          return console.log('open', $scope.post.postFileName);
+        });
+      }
+    }
   };
 });
 

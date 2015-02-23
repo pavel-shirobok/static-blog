@@ -1,5 +1,5 @@
 angular
-  .module 'sbPost', ['sbCut', 'sbImg', 'sbCode']
+  .module 'sbPost', ['sbCut', 'sbImg', 'sbCode', 'sbPostHeader']
   .directive 'sbPost', ()->
     replace : false
     scope :

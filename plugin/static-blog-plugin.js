@@ -30,6 +30,7 @@ StaticBlogGenerator.prototype.initRenderer = function() {
     this.renderer.heading = function(text, level, raw){
         if(!this.post.name){
             this.post.name = text;
+            return '<h1 sb-post-header post="post" is-link="isShort" ng-click="openPost(post)">' + escape(text) + '</h1>';
         }
 
         if(!this.post.cut && text =='cut' && level == 1) {
@@ -56,7 +57,7 @@ StaticBlogGenerator.prototype.initRenderer = function() {
 
     this.renderer.code = this.renderer.codespan = function(code, lang) {
         lang = lang || 'auto';
-        return '<code sb-code lang="' + lang + '">' + code + '</code>'
+        return '<code sb-code lang="' + lang + '">' + escape(code) + '</code>'
     }.bind(this);
 
 
@@ -151,3 +152,13 @@ StaticBlogGenerator.prototype.onEnd = function(done) {
     );
     done();
 };
+
+
+function escape(html, encode) {
+    return html
+        .replace(!encode ? /&(?!#?\w+;)/g : /&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
